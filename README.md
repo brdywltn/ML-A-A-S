@@ -36,11 +36,11 @@ Development Plan
 
 | Task | Description | Assigned To |
 | --- | --- | --- |
-| Set up project structure and environment (Python Django, Docker) | Set up the project structure and environment using Python Django and Docker |  |
-| Create user stories and define acceptance criteria for each story | Create user stories and define acceptance criteria for each story |  |
-| Develop the main page with user selection options | Develop the main page with user selection options |  |
-| Develop the login/registration page for end-users | Develop the login/registration page for end-users |  |
-| Implement user authentication and authorization | Implement user authentication and authorization |  |
+| Set up project structure and environment (Python Django, Docker) some SQL| Set up the project structure and environment using Python Django and Docker | Hamid |
+| Develop the main page with user selection options  | Develop the main page with user selection options | Micheal |
+| Develop the login/registration page for end-users | Develop the login/registration page for end-users | Brody |
+| Implement user authentication and authorization | Implement user authentication and authorization | James |
+| Users pages Admin, maintaining and user | Implement user authentication and authorization | Kacper |
 
 ### Sprint 2 (Week 3-4)
 
