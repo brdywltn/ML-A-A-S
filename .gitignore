@@ -1,1 +1,3 @@
 myproject/node_modules
+myproject/myapp/static/CACHE
+myproject/myapp/__pycache__
