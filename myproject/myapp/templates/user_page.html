@@ -3,51 +3,6 @@
   class="grid grid-cols-1 px-4 pt-6 xl:grid-cols-3 xl:gap-4 dark:bg-grey-300"
 >
   <div class="mb-4 col-span-full xl:mb-2">
-    <nav class="flex mb-5" aria-label="Breadcrumb">
-      <ol
-        class="inline-flex items-center space-x-1 text-sm font-medium md:space-x-2"
-      >
-        <li class="inline-flex items-center">
-          <a
-            href="/"
-            class="inline-flex items-center text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-white"
-          >
-            <svg
-              class="w-5 h-5 mr-2.5"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"
-              ></path>
-            </svg>
-            Home
-          </a>
-        </li>
-        <li>
-          <div class="flex items-center">
-            <svg
-              class="w-6 h-6 text-gray-400"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                clip-rule="evenodd"
-              ></path>
-            </svg>
-            <span
-              class="ml-1 text-gray-400 md:ml-2 dark:text-gray-500"
-              aria-current="page"
-              >Settings</span
-            >
-          </div>
-        </li>
-      </ol>
-    </nav>
     <h1 class="text-xl font-semibold text-gray-300 sm:text-2xl dark:text-white">
       User settings
     </h1>
@@ -235,7 +190,9 @@
           </div>
         </div>
       </form>
+      {% comment %} REPLACE WITH LOGIC TO CHECK PROPER USER {% endcomment %}
     </div>
+    {% if 1 %}
     <div
       class="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800"
     >
@@ -282,7 +239,10 @@
           Download Financial Statement
         </button>
       </form>
+      {% comment %} REPLACE WITH LOGIC TO CHECK PROPER USER {% endcomment %}
     </div>
+    {% endif %} {% if 1 %}
+
     <div
       class="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800"
     >
@@ -318,8 +278,8 @@
         </button>
       </form>
     </div>
+    {% comment %} AI content {% endcomment %} {% endif%}
   </div>
-
 
   <div class="col-span-2">
     <div
@@ -478,127 +438,133 @@
         </tbody>
       </table>
     </div>
-  </div>
-  <div
-    class="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800"
-  >
-    <h3 class="mb-4 text-xl font-semibold dark:text-white">Application Logs</h3>
-    <table
-      class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400"
+    {% if 1 %} {% comment %} REPLACE WITH LOGIC TO CHECK PROPER USER
+    {%endcomment %}
+
+    <div
+      class="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800"
     >
-      <thead
-        class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+      <h3 class="mb-4 text-xl font-semibold dark:text-white">
+        Application Logs
+      </h3>
+      <table
+        class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400"
       >
-        <tr>
-          <th scope="col" class="px-6 py-3">Date</th>
-          <th scope="col" class="px-6 py-3">Action</th>
-          <th scope="col" class="px-6 py-3">User ID</th>
-          <th scope="col" class="px-6 py-3">User Email</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% comment %} MOCK DATA REPLACE WITH REAL LOGS {% endcomment %}
-        <tr
-          class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700"
+        <thead
+          class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
         >
-          <td
-            scope="row"
-            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+          <tr>
+            <th scope="col" class="px-6 py-3">Date</th>
+            <th scope="col" class="px-6 py-3">Action</th>
+            <th scope="col" class="px-6 py-3">User ID</th>
+            <th scope="col" class="px-6 py-3">User Email</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% comment %} MOCK DATA REPLACE WITH REAL LOGS {% endcomment %}
+          <tr
+            class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700"
           >
-            17:45 17.02.2024
-          </td>
-          <td class="px-6 py-4">
-            <a
-              href="#"
-              class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-              >Download</a
+            <td
+              scope="row"
+              class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
             >
-          </td>
-          <td class="px-6 py-4">123</td>
-          <td class="px-6 py-4">user1@example.com</td>
-        </tr>
+              17:45 17.02.2024
+            </td>
+            <td class="px-6 py-4">
+              <a
+                href="#"
+                class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                >Download</a
+              >
+            </td>
+            <td class="px-6 py-4">123</td>
+            <td class="px-6 py-4">user1@example.com</td>
+          </tr>
 
-        <tr
-          class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700"
-        >
-          <td
-            scope="row"
-            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+          <tr
+            class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700"
           >
-            21:30 22.02.2024
-          </td>
-          <td class="px-6 py-4">
-            <a
-              href="#"
-              class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-              >Upload</a
+            <td
+              scope="row"
+              class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
             >
-          </td>
-          <td class="px-6 py-4">456</td>
-          <td class="px-6 py-4">user2@example.com</td>
-        </tr>
+              21:30 22.02.2024
+            </td>
+            <td class="px-6 py-4">
+              <a
+                href="#"
+                class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                >Upload</a
+              >
+            </td>
+            <td class="px-6 py-4">456</td>
+            <td class="px-6 py-4">user2@example.com</td>
+          </tr>
 
-        <tr
-          class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700"
-        >
-          <td
-            scope="row"
-            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+          <tr
+            class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700"
           >
-            22:15 23.02.2024
-          </td>
-          <td class="px-6 py-4">
-            <a
-              href="#"
-              class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-              >Delete</a
+            <td
+              scope="row"
+              class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
             >
-          </td>
-          <td class="px-6 py-4">789</td>
-          <td class="px-6 py-4">user3@example.com</td>
-        </tr>
+              22:15 23.02.2024
+            </td>
+            <td class="px-6 py-4">
+              <a
+                href="#"
+                class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                >Delete</a
+              >
+            </td>
+            <td class="px-6 py-4">789</td>
+            <td class="px-6 py-4">user3@example.com</td>
+          </tr>
 
-        <tr
-          class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700"
-        >
-          <td
-            scope="row"
-            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+          <tr
+            class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700"
           >
-            23:00 24.02.2024
-          </td>
-          <td class="px-6 py-4">
-            <a
-              href="#"
-              class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-              >Modify</a
+            <td
+              scope="row"
+              class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
             >
-          </td>
-          <td class="px-6 py-4">101</td>
-          <td class="px-6 py-4">user4@example.com</td>
-        </tr>
+              23:00 24.02.2024
+            </td>
+            <td class="px-6 py-4">
+              <a
+                href="#"
+                class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                >Modify</a
+              >
+            </td>
+            <td class="px-6 py-4">101</td>
+            <td class="px-6 py-4">user4@example.com</td>
+          </tr>
 
-        <tr
-          class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700"
-        >
-          <td
-            scope="row"
-            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+          <tr
+            class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700"
           >
-            23:45 25.02.2024
-          </td>
-          <td class="px-6 py-4">
-            <a
-              href="#"
-              class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-              >View</a
+            <td
+              scope="row"
+              class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
             >
-          </td>
-          <td class="px-6 py-4">112</td>
-          <td class="px-6 py-4">user5@example.com</td>
-        </tr>
-      </tbody>
-    </table>
+              23:45 25.02.2024
+            </td>
+            <td class="px-6 py-4">
+              <a
+                href="#"
+                class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                >View</a
+              >
+            </td>
+            <td class="px-6 py-4">112</td>
+            <td class="px-6 py-4">user5@example.com</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    {% endif %} {% comment %} Admin page functionality end {% endcomment %}
   </div>
 </div>
 {% endblock content %}

@@ -9,7 +9,8 @@ from .views import login
 
 
 urlpatterns = [
-    path('', index, name='index'),
+    # path('', index, name='index'), <- uncomment when index/main page will be ready
+    path('', maintenance),
     path('user/',users),
     path('404/', handler404),
     path('500/', handler500),
