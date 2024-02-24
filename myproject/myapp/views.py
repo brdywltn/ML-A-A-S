@@ -19,3 +19,9 @@ def handler500(request, *args, **kwargs):
 
 def maintenance(request):
     return render(request, 'maintenance.html')
+
+def login(request):
+    return render(request, 'login.html')
+
+def register(request):
+    return render(request, 'register.html')
