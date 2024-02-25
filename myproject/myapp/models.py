@@ -36,8 +36,8 @@ class Feedback(models.Model):
     *   Feedback Model
     """
     user_id = models.ForeignKey("User")
-    user_id = models.IntegerField()
     content = models.CharField(max_length=2000)
+    date = models.DateTimeField()
 
 class Bills(models.Model):
     """
