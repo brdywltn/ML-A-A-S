@@ -1,6 +1,8 @@
 Web Application Development Plan
 ===============================
 
+Tailwind build command: `docker-compose run tailwind npx tailwindcss -i ./myapp/static/src/input.css -o ./myapp/static/src/output.css --watch`
+
 The web application is expected to meet the following requirements:
 
 1. At least the following pages are expected to be included:
