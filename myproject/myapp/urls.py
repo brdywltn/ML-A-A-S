@@ -6,16 +6,17 @@ from .views import handler404
 from .views import handler500
 from .views import register
 from .views import login
-
+from .views import pricing
 
 urlpatterns = [
     # path('', index, name='index'), <- uncomment when index/main page will be ready
     path('', index),
-    path('user/',users, name='user'),
+    path('user/', users, name='users'),
     path('404/', handler404),
     path('500/', handler500),
     path('maintenance/', maintenance),
     path('register/', register, name='register'),
     path('login/', login, name='login'),
+    path('pricing/', pricing, name='pricing')
 ]
 

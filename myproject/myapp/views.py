@@ -25,3 +25,6 @@ def login(request):
 
 def register(request):
     return render(request, 'register.html')
+
+def pricing(request):
+    return render(request, 'pricing.html')
