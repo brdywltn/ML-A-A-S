@@ -11,11 +11,12 @@ from .views import privacy_policy
 
 
 
+from .views import pricing
 
 urlpatterns = [
     # path('', index, name='index'), <- uncomment when index/main page will be ready
     path('', index),
-    path('user/',users, name='user'),
+    path('user/', users, name='users'),
     path('404/', handler404),
     path('500/', handler500),
     path('maintenance/', maintenance),
@@ -23,6 +24,6 @@ urlpatterns = [
     path('login/', login, name='login'),
     path('terms_conditions/', terms_conditions, name='terms_conditions'),
     path('pricay_policy/', privacy_policy, name='privacy_policy'),
-    
+    path('pricing/', pricing, name='pricing')
 ]
 
