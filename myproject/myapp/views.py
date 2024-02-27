@@ -25,3 +25,9 @@ def login(request):
 
 def register(request):
     return render(request, 'register.html')
+
+def terms_conditions(request):
+    return render(request, 'terms_conditions.html')
+
+def privacy_policy(request):
+    return render(request, 'privacy_policy.html')
