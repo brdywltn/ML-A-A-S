@@ -15,7 +15,7 @@ COPY ./myapp/static ./myapp/static
 COPY tailwind.config.js ./
 
 # Run the Tailwind build process
-#RUN npx tailwindcss-cli build myapp/static/src/input.css -o myapp/static/src/output.css
+# RUN npx tailwindcss-cli build myapp/static/src/input.css -o myapp/static/src/output.css
 
 # Use an official Python runtime as the final stage
 FROM python:3.11
