@@ -29,4 +29,6 @@ urlpatterns = [
     path('uploading_file/', handling_music_file, name='uploading_file'),
 ,
     path('generate_pdf/', generate_pdf, name='generate_pdf')
+    path('pricing/', pricing, name='pricing'),
+    path('generate_pdf/', generate_pdf, name='generate_pdf')
 ]
