@@ -7,6 +7,7 @@ from .views import handler500
 from .views import register
 from .views import login
 from .views import pricing
+from .views import generate_pdf
 
 urlpatterns = [
     # path('', index, name='index'), <- uncomment when index/main page will be ready
@@ -17,6 +18,7 @@ urlpatterns = [
     path('maintenance/', maintenance),
     path('register/', register, name='register'),
     path('login/', login, name='login'),
-    path('pricing/', pricing, name='pricing')
+    path('pricing/', pricing, name='pricing'),
+    path('generate_pdf/', generate_pdf, name='generate_pdf')
 ]
 
