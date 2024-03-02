@@ -232,12 +232,14 @@
             required
           />
         </div>
+        <a href="{% url 'generate_pdf' %}"
         <button
           type="submit"
           class="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
         >
           Download Financial Statement
         </button>
+        </a>
       </form>
       {% comment %} REPLACE WITH LOGIC TO CHECK PROPER USER {% endcomment %}
     </div>

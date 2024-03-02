@@ -12,6 +12,7 @@ from .views import handling_music_file
 
 
 from .views import pricing
+from .views import generate_pdf
 
 urlpatterns = [
     # path('', index, name='index'), <- uncomment when index/main page will be ready
@@ -26,5 +27,6 @@ urlpatterns = [
     path('pricay_policy/', privacy_policy, name='privacy_policy'),
     path('pricing/', pricing, name='pricing'),
     path('uploading_file/', handling_music_file, name='uploading_file'),
-
+,
+    path('generate_pdf/', generate_pdf, name='generate_pdf')
 ]
