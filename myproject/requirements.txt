@@ -7,3 +7,5 @@ rcssmin==1.1.1
 rjsmin==1.2.1
 sqlparse==0.4.4
 typing_extensions==4.9.0
+psycopg==3.1.18
+psycopg-binary==3.1.18
