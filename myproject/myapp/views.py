@@ -2,8 +2,21 @@ from django.shortcuts import render
 from django.template import RequestContext
 
 def index(request):
-    return render(request, 'index.html')
+    
+    if request.method == 'POST':
+        if request.FILES['audio_file'] != None:
+            uploaded_file = request.FILES['audio_file']
+            # Do something with the uploaded file
+        return render(request, 'index1.html')
+    else:
+        return render(request, 'index1.html')
+    # if request.user.is_authenticated:
+    #     return render(request, 'index1.html')
+    # else:
+    #     return render(request, 'index1.html')
 
+
+    
 def users(request):
     return render(request, 'user_page.html')
 
