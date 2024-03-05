@@ -1,4 +1,4 @@
-# from django.db import models
+from django.db import models
 
 # #   Usertypes
 # #   ---------
@@ -57,4 +57,5 @@
 #     data = models.CharField(max_length=2000)
 #     uploader = models.ForeignKey("User", on_delete=models.CASCADE)
     
-
+class Audio(models.Model):
+    file = models.FileField('audio', upload_to='audio')

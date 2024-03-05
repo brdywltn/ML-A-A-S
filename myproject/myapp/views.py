@@ -2,8 +2,19 @@ from django.shortcuts import render
 from django.template import RequestContext
 
 def index(request):
-    return render(request, 'index.html')
-
+    #for now this authenication just returns the main view
+    #when user auth is done change the else to return index2.html
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            if request.FILES['audio_file'] != None:
+                uploaded_file = request.FILES['audio_file']
+                # Do something with the uploaded file
+            return render(request, 'index1.html')
+        else:
+            return render(request, 'index1.html')
+    else:
+        return render(request, 'index1.html')
+ 
 def users(request):
     return render(request, 'user_page.html')
 
@@ -25,6 +36,12 @@ def login(request):
 
 def register(request):
     return render(request, 'register.html')
+
+def terms_conditions(request):
+    return render(request, 'terms_conditions.html')
+
+def privacy_policy(request):
+    return render(request, 'privacy_policy.html')
 
 def pricing(request):
     return render(request, 'pricing.html')
