@@ -87,16 +87,29 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': os.environ.get('DATABASE_NAME', 'default_db_name'),
+#         'USER': os.environ.get('DATABASE_USER', 'default_user'),
+#         'PASSWORD': os.environ.get('DATABASE_PASSWORD', 'default_password'),
+#         'HOST': os.environ.get('DATABASE_HOST', 'db'),  # Set to 'db' for Docker
+#         'PORT': os.environ.get('DATABASE_PORT', 3306),
+#     }
+# }
+
+# postgresql connection
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ.get('DATABASE_NAME', 'default_db_name'),
-        'USER': os.environ.get('DATABASE_USER', 'default_user'),
-        'PASSWORD': os.environ.get('DATABASE_PASSWORD', 'default_password'),
-        'HOST': os.environ.get('DATABASE_HOST', 'db'),  # Set to 'db' for Docker
-        'PORT': os.environ.get('DATABASE_PORT', 3306),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('POSTGRES_NAME', 'default_db_name'),
+        'USER': os.environ.get('POSTGRES_USER', 'default_user'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'default_password'),
+        'HOST': os.environ.get('POSTGRES_HOST', 'db'),  # Set to 'db' for Docker
+        'PORT': os.environ.get('POSTGRES_PORT', 5432),
     }
 }
+
 
 
 # Password validation

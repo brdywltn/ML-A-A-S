@@ -1,18 +1,62 @@
+# version: '3.8'
+# services:
+#   db:
+#       image: mysql:8.3
+#       volumes:
+#         - mysql_data:/var/lib/mysql
+#         #- ./db_script.sql:/docker-entrypoint-initdb.d/init-db.sql 
+#       restart: unless-stopped
+#       ports:
+#         - "3307:3306"
+#       environment:
+#         MYSQL_ROOT_PASSWORD: root_password
+#         MYSQL_DATABASE: mlaas
+#         MYSQL_USER: user
+#         MYSQL_PASSWORD: password
+#   web:
+#     build: .
+#     command: /bin/sh -c "/entrypoint.sh"
+#     volumes:
+#       - .:/usr/src/app
+#       - static_volume:/usr/src/app/static
+#     depends_on:
+#       - db
+#     environment:
+#       #DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
+#       #DEBUG: ${DEBUG}
+#       DATABASE_NAME: ${DATABASE_NAME}
+#       DATABASE_USER: ${DATABASE_USER}
+#       DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+#       DATABASE_HOST: ${DATABASE_HOST}
+#       DATABASE_PORT: ${DATABASE_PORT}
+#     ports:
+#       - "8000:8000"
+#   tailwind:
+#     image: node:20.11.1-slim
+#     working_dir: /usr/src/app
+#     volumes:
+#       - .:/usr/src/app
+#       - static_volume:/usr/src/app/static
+  
+
+# volumes:
+#   static_volume:
+#   mysql_data:
+
+
 version: '3.8'
 services:
   db:
-      image: mysql:8.3
-      volumes:
-        - mysql_data:/var/lib/mysql
-        #- ./db_script.sql:/docker-entrypoint-initdb.d/init-db.sql 
-      restart: unless-stopped
-      ports:
-        - "3307:3306"
-      environment:
-        MYSQL_ROOT_PASSWORD: root_password
-        MYSQL_DATABASE: mlaas
-        MYSQL_USER: user
-        MYSQL_PASSWORD: password
+    image: postgres:13
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_NAME}
+    ports:
+      - "5432:5432"
   web:
     build: .
     command: /bin/sh -c "/entrypoint.sh"
@@ -22,25 +66,24 @@ services:
     depends_on:
       - db
     environment:
-      #DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
-      #DEBUG: ${DEBUG}
-      DATABASE_NAME: ${DATABASE_NAME}
-      DATABASE_USER: ${DATABASE_USER}
-      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
-      DATABASE_HOST: ${DATABASE_HOST}
-      DATABASE_PORT: ${DATABASE_PORT}
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
+      DEBUG: ${DEBUG}
+      POSTGRES_NAME: ${POSTGRES_NAME}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_PORT: ${POSTGRES_PORT}
     ports:
       - "8000:8000"
+#legacy env file
+    # env_file:
+    # - ./.end.dev
   tailwind:
     image: node:20.11.1-slim
     working_dir: /usr/src/app
     volumes:
       - .:/usr/src/app
       - static_volume:/usr/src/app/static
-  
 
 volumes:
   static_volume:
-  mysql_data:
-
-
+  postgres_data:
