@@ -1,0 +1,128 @@
+User uploaded file 
+/usr/src/app/myapp/views.py changed, reloading.
+Watching for file changes with StatReloader
+User uploaded file
+Error
+Warning
+/usr/src/app/myapp/urls.py changed, reloading.
+Watching for file changes with StatReloader
+/usr/src/app/myapp/urls.py changed, reloading.
+Watching for file changes with StatReloader
+/usr/src/app/myapp/urls.py changed, reloading.
+Watching for file changes with StatReloader
+/usr/src/app/myapp/urls.py changed, reloading.
+Watching for file changes with StatReloader
+/usr/src/app/myapp/urls.py changed, reloading.
+Watching for file changes with StatReloader
+/usr/src/app/myapp/views.py changed, reloading.
+Watching for file changes with StatReloader
+/usr/src/app/myapp/views.py changed, reloading.
+Watching for file changes with StatReloader
+/usr/src/app/myapp/views.py changed, reloading.
+Watching for file changes with StatReloader
+User uploaded file
+/usr/src/app/myapp/views.py changed, reloading.
+Watching for file changes with StatReloader
+/usr/src/app/myapp/views.py changed, reloading.
+Watching for file changes with StatReloader
+Not Found: /favicon.ico
+User uploaded file has been received
+Internal Server Error: /uploading_file/
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/django/core/handlers/base.py", line 204, in _get_response
+    self.check_response(response, callback)
+  File "/usr/local/lib/python3.11/site-packages/django/core/handlers/base.py", line 332, in check_response
+    raise ValueError(
+ValueError: The view myapp.views.handling_music_file didn't return an HttpResponse object. It returned None instead.
+/usr/src/app/myapp/views.py changed, reloading.
+Watching for file changes with StatReloader
+/usr/src/app/myapp/views.py changed, reloading.
+Watching for file changes with StatReloader
+/usr/src/app/myapp/views.py changed, reloading.
+Watching for file changes with StatReloader
+/usr/src/app/myapp/views.py changed, reloading.
+Watching for file changes with StatReloader
+User uploaded file has been received
+Internal Server Error: /uploading_file/
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/django/utils/deprecation.py", line 136, in __call__
+    response = self.process_response(request, response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/django/middleware/clickjacking.py", line 27, in process_response
+    if response.get("X-Frame-Options") is not None:
+       ^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'get'
+/usr/src/app/myapp/views.py changed, reloading.
+Watching for file changes with StatReloader
+/usr/src/app/myapp/views.py changed, reloading.
+Watching for file changes with StatReloader
+User uploaded file has been received
+/usr/src/app/myapp/views.py changed, reloading.
+Watching for file changes with StatReloader
+User uploaded file has been received
+/usr/src/app/myapp/views.py changed, reloading.
+Watching for file changes with StatReloader
+User uploaded file has been received ethereal-vistas-191254.mp3
+/usr/src/app/myapp/views.py changed, reloading.
+Watching for file changes with StatReloader
+Internal Server Error: /uploading_file/
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/src/app/myapp/views.py", line 14, in handling_music_file
+    logger.info('Unauthenticated user uploaded file %s at %s', request.FILES['audio_file'].name, timezone.now())
+                                                                                                 ^^^^^^^^
+NameError: name 'timezone' is not defined
+/usr/src/app/myapp/views.py changed, reloading.
+Watching for file changes with StatReloader
+Unauthenticated user uploaded file ethereal-vistas-191254.mp3 at 2024-03-09 13:53:20.754075+00:00
+/usr/src/app/myapp/views.py changed, reloading.
+Watching for file changes with StatReloader
+/usr/src/app/myapp/models.py changed, reloading.
+Watching for file changes with StatReloader
+/usr/src/app/myapp/models.py changed, reloading.
+Watching for file changes with StatReloader
+/usr/src/app/myapp/models.py changed, reloading.
+Watching for file changes with StatReloader
+/usr/src/app/myapp/views.py changed, reloading.
+Watching for file changes with StatReloader
+/usr/src/app/myapp/views.py changed, reloading.
+Watching for file changes with StatReloader
+/usr/src/app/myapp/views.py changed, reloading.
+Watching for file changes with StatReloader
+/usr/src/app/myapp/views.py changed, reloading.
+Watching for file changes with StatReloader
+/usr/src/app/myapp/views.py changed, reloading.
+Watching for file changes with StatReloader
+/usr/src/app/myapp/views.py changed, reloading.
+Watching for file changes with StatReloader
+/usr/src/app/myapp/models.py changed, reloading.
+Watching for file changes with StatReloader
+/usr/src/app/myapp/models.py changed, reloading.
+Watching for file changes with StatReloader
+/usr/src/app/myapp/models.py changed, reloading.
+Watching for file changes with StatReloader
+/usr/src/app/myapp/models.py changed, reloading.
+Watching for file changes with StatReloader
+/usr/src/app/myapp/views.py changed, reloading.
+Watching for file changes with StatReloader
+/usr/src/app/myapp/views.py changed, reloading.
+Watching for file changes with StatReloader
+/usr/src/app/myapp/models.py changed, reloading.
+Watching for file changes with StatReloader
+/usr/src/app/myapp/models.py changed, reloading.
+Watching for file changes with StatReloader
+/usr/src/app/myapp/models.py changed, reloading.
+Watching for file changes with StatReloader
+/usr/src/app/myapp/views.py changed, reloading.
+Watching for file changes with StatReloader

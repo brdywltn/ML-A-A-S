@@ -8,7 +8,7 @@ from .views import register
 from .views import login
 from .views import terms_conditions
 from .views import privacy_policy
-
+from .views import handling_music_file
 
 
 from .views import pricing
@@ -24,6 +24,7 @@ urlpatterns = [
     path('login/', login, name='login'),
     path('terms_conditions/', terms_conditions, name='terms_conditions'),
     path('pricay_policy/', privacy_policy, name='privacy_policy'),
-    path('pricing/', pricing, name='pricing')
-]
+    path('pricing/', pricing, name='pricing'),
+    path('uploading_file/', handling_music_file, name='uploading_file'),
 
+]

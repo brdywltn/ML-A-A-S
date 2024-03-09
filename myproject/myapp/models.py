@@ -1,5 +1,21 @@
 from django.db import models
+from django.contrib.auth.models import User
+from django.contrib.postgres.fields import JSONField
+from enum import Enum
 
+class Action(Enum):
+    UPLOAD_FILE = 'upload_file'
+    LOGIN = 'login'
+    REGISTER = 'register'
+    PAYMENT = 'payment'
+    GENERATE_FINANCIAL_STATEMENT = 'generate_financial_statement'
+    CHANGE_MLA = 'change_MLA'
+    RUN_ALGORITHM = 'run_algorithm'
+    INVALID_FILE = 'invalid_file'
+    INVALID_PASSWORD = 'invalid_password'
+    USER_DOES_NOT_EXIST = 'user_does_not_exist'
+    DOWNLOAD_BREAKDOWN = 'download_breakdown'
+    UNKNOWN = 'unknown'
 # #   Usertypes
 # #   ---------
 # #   0 - Basic User
@@ -56,6 +72,34 @@ from django.db import models
 #     date = models.DateTimeField()
 #     data = models.CharField(max_length=2000)
 #     uploader = models.ForeignKey("User", on_delete=models.CASCADE)
-    
+
 class Audio(models.Model):
     file = models.FileField('audio', upload_to='audio')
+
+class Log(models.Model):
+    date = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    log = models.JSONField()
+
+def get_log_data(action, status='success', file=None, **additional_field):
+    log_data = {
+        'action': action,
+        'status': status,
+        'file': file,
+    }
+    log_data.update(additional_fields)
+    return log_data
+
+
+# # LOGIN
+# log_data = get_log_data(Action.LOGIN, 'success', user=request.user.username)
+# create_log(log_data)
+# # REGISTER
+# log_data = get_log_data(Action.REGISTER, 'success', user=request.user.username)
+# create_log(log_data)
+# # INVALID_PASSWORD
+# log_data = get_log_data(Action.INVALID_PASSWORD, 'error', user=request.user.username)
+# create_log(log_data)
+# # GENERATE_FINANCIAL_STATEMENT
+# log_data = get_log_data(Action.GENERATE_FINANCIAL_STATEMENT, 'success', user=request.user.username)
+# create_log(log_data)

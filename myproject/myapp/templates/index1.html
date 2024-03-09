@@ -2,11 +2,13 @@
 
 {% block content %}
   <section class="bg-white dark:bg-gray-900">
+    <script src="https://unpkg.com/wavesurfer.js"></script>
+
     <div class="gap-16 items-center py-8 px-4 mx-auto max-w-screen-xl lg:grid lg:grid-cols-2">
         <div class="font-light text-gray-500 sm:text-lg dark:text-gray-400">
             <h2 class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">An Intelligent System for Instrument Detection</h2>
-            <p class="mb-4">*placeholder input* We present to you a intelligent system for instrument detection. Using audio processing techinques and a convolutionsal 
-              neural network we are able to classify instruments used in a song. other exciting words that might catch peoples attention and make them use our product. 
+            <p class="mb-4">*placeholder input* We present to you a intelligent system for instrument detection. Using audio processing techinques and a convolutionsal
+              neural network we are able to classify instruments used in a song. other exciting words that might catch peoples attention and make them use our product.
               To use our service upload an mp3 file below.
               *placeholder input*
             </p>
@@ -16,47 +18,83 @@
             <img class="w-240 h-60 rounded-lg" src="{% static 'src/images/0_IPKn3dedq86U4UqP.png' %}" alt="CNN for audio">
         </div>
     </div>
-    <div >
-      <form enctype="multipart/form-data" method="post" class="gap-16 items-center py-8 px-4 mx-auto max-w-screen-xl lg:grid lg:grid-cols-2">
+    <div class="gap-16 items-center py-8 px-4 mx-auto max-w-screen-xl lg:grid lg:grid-cols-2" >
+      <form enctype="multipart/form-data" method="post" id="uploadForm">
         {% csrf_token %}
-        <input 
-          class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" 
-          id="audio_file"
-          name="audio_file"
-          type="file">
-        
-      
-        <button type="submit" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
-          Run Algorithm
-        </button>
-      </form>
-    </div>
-    
-    <audio id="myAudio">
-      <source src="{% static 'src/media/G53-44104-1111-00083.wav' %}" type="audio/wav">
-      Your browser does not support the audio element.
-    </audio>
- 
-    <div class="gap-16 items-center py-8 px-4 mx-auto max-w-screen-xl lg:grid lg:grid-cols-2 lg:py-8">
-      <button onclick="playAudio()" type="button" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
-        Play Audio</button>
-      <button onclick="pauseAudio()" type="button" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
-        Pause Audio</button> 
+        <input
+        class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+        id="audio_file"
+        name="audio_file"
+        type="file"
+        accept=".mp3,.wav"
+        onchange="loadAudioFile(event)"
+    >
+  </form>
+
+    <button type="submit" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
+      Run Algorithm
+    </button>
     </div>
 
-      <script>
-      var x = document.getElementById("myAudio"); 
-      
-      function playAudio() { 
-        x.play(); 
-      } 
-      
-      function pauseAudio() { 
-        x.pause(); 
-      } 
-      </script>
-    
+
+    <div id="player" class="py-8 px-4 mx-auto max-w-screen-xl lg:py-8 hidden">
+      <div id="waveform" class="w-full h-32 m-4"></div>
+      <button id="playButton" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700 w-full" disabled>Play</button>
+  </div>
+  <script>
+      var wavesurfer = WaveSurfer.create({
+          container: '#waveform',
+          waveColor: 'gray',
+          progressColor: '#f9f1f1'
+      });
+      function loadAudioFile(event) {
+        var file = event.target.files[0];
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            wavesurfer.loadBlob(file);
+            document.getElementById('player').classList.remove('hidden');
+            submitForm();  // Submit the form
+        }
+        reader.readAsDataURL(file);
+    }
+      wavesurfer.on('ready', function () {
+          document.getElementById('playButton').disabled = false;
+      });
+      document.getElementById('playButton').addEventListener('click', function () {
+          wavesurfer.playPause();
+          this.textContent = wavesurfer.isPlaying() ? 'Stop' : 'Play';
+      });
+      wavesurfer.on('play', function () {
+          document.getElementById('playButton').textContent = 'Stop';
+      });
+      wavesurfer.on('pause', function () {
+          document.getElementById('playButton').textContent = 'Play';
+      });
+      function submitForm() {
+        var form = document.getElementById('uploadForm');
+        var formData = new FormData(form);
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/uploading_file/', true);
+        xhr.setRequestHeader('X-CSRFToken', getCookie('csrftoken'));  // Include the CSRF token
+        xhr.send(formData);
+    }
+    // Function to get the CSRF token
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+  </script>
 </section>
 
-  
+
 {% endblock content %}

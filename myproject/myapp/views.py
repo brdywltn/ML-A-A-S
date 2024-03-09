@@ -1,5 +1,27 @@
 from django.shortcuts import render
 from django.template import RequestContext
+import logging
+from django.http import HttpResponse
+from django.utils import timezone
+
+logger = logging.getLogger(__name__)
+
+def create_log(user, log_data):
+    Log.objects.create(user=user, log=log_data)
+
+def handling_music_file(request):
+    if request.method == 'POST':
+        if 'audio_file' in request.FILES:
+            log_data = {
+                'action': 'File uploaded',
+                'file': request.FILES['audio_file'].name,
+            }
+            log_data = get_log_data(Action.UPLOAD_FILE, 'success', file=request.FILES['audio_file'].name)
+            create_log(request.user if request.user.is_authenticated else None, log_data)
+            return HttpResponse('File uploaded successfully!')
+    log_data = get_log_data(Action.invalid_file, 'error')
+    create_log(None, log_data)
+    return HttpResponse('File invalid')
 
 def index(request):
     #for now this authenication just returns the main view
@@ -14,7 +36,7 @@ def index(request):
             return render(request, 'index1.html')
     else:
         return render(request, 'index1.html')
- 
+
 def users(request):
     return render(request, 'user_page.html')
 
