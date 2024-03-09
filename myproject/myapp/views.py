@@ -3,8 +3,17 @@ from django.template import RequestContext
 import logging
 from django.http import HttpResponse
 from django.utils import timezone
-
+from .models import Log, Action
 logger = logging.getLogger(__name__)
+
+def get_log_data(action, status='success', file=None, **additional_fields):
+    log_data = {
+        'action': action.value,
+        'status': status,
+        'file': file,
+    }
+    log_data.update(additional_fields)
+    return log_data
 
 def create_log(user, log_data):
     Log.objects.create(user=user, log=log_data)
@@ -17,11 +26,11 @@ def handling_music_file(request):
                 'file': request.FILES['audio_file'].name,
             }
             log_data = get_log_data(Action.UPLOAD_FILE, 'success', file=request.FILES['audio_file'].name)
-            create_log(request.user if request.user.is_authenticated else None, log_data)
-            return HttpResponse('File uploaded successfully!')
+            # create_log(request.user if request.user.is_authenticated else None, log_data)
+            return HttpResponse('File uploaded successfully!',log_data)
     log_data = get_log_data(Action.invalid_file, 'error')
-    create_log(None, log_data)
-    return HttpResponse('File invalid')
+    # create_log(None, log_data)
+    return HttpResponse('File invalid',log_data)
 
 def index(request):
     #for now this authenication just returns the main view

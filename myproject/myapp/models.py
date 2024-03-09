@@ -81,16 +81,6 @@ class Log(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     log = models.JSONField()
 
-def get_log_data(action, status='success', file=None, **additional_field):
-    log_data = {
-        'action': action,
-        'status': status,
-        'file': file,
-    }
-    log_data.update(additional_fields)
-    return log_data
-
-
 # # LOGIN
 # log_data = get_log_data(Action.LOGIN, 'success', user=request.user.username)
 # create_log(log_data)
