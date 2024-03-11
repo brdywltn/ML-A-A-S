@@ -3,3 +3,4 @@ myproject/env
 myproject/myapp/static/CACHE
 myproject/myapp/__pycache__
 .venv/
+.DS_Store
