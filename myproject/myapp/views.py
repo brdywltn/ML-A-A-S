@@ -4,6 +4,7 @@ import logging
 from django.http import HttpResponse
 from django.utils import timezone
 from .models import Log, Action
+
 logger = logging.getLogger(__name__)
 
 def get_log_data(action, status='success', file=None, **additional_fields):
