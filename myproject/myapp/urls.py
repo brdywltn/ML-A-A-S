@@ -28,6 +28,5 @@ urlpatterns = [
     path('pricay_policy/', privacy_policy, name='privacy_policy'),
     path('pricing/', pricing, name='pricing'),
     path('uploading_file/', handling_music_file, name='uploading_file'),
-,
     path('generate_pdf/', generate_pdf, name='generate_pdf')
 ]
