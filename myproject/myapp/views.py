@@ -1,11 +1,17 @@
-from django.shortcuts import render
-from django.template import RequestContext
-import logging
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.forms import UserCreationForm 
+from django.contrib.auth.models import User
+from django.contrib import messages
 from django.http import HttpResponse
 from django.utils import timezone
+from django.shortcuts import render, redirect
+from django.template import RequestContext
+import logging
+from reportlab.pdfgen import canvas
 
-from .forms import InstrumentDetectionForm
-from .models import Log, Action
+from .forms import InstrumentDetectionForm, CustomRegistrationForm, LoginForm
+from .models import Log, Action, User
+
 
 logger = logging.getLogger(__name__)
 
@@ -34,9 +40,8 @@ def handling_music_file(request):
     log_data = get_log_data(Action.invalid_file, 'error')
     # create_log(None, log_data)
     return HttpResponse('File invalid',log_data)
-from .models import User
-from django.http import HttpResponse
-from reportlab.pdfgen import canvas
+
+
 
 def index(request):
     #for now this authenication just returns the main view
@@ -69,11 +74,43 @@ def handler500(request, *args, **kwargs):
 def maintenance(request):
     return render(request, 'maintenance.html')
 
-def login(request):
-    return render(request, 'login.html')
+def user_login(request):
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+
+            user = authenticate(request, username=username, password=password)  # Passing request along with username and password
+
+            if user:
+                login(request, user=user)  # Passing request along with user
+                return redirect('users')
+            else:
+                messages.error(request, 'Invalid username or password.')
+        else:
+            pass
+
+    else:
+        form = LoginForm()
+    return render(request, 'login.html', {'form': form})
+
 
 def register(request):
-    return render(request, 'register.html')
+    if request.method == 'POST':
+        form = CustomRegistrationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('user_login')
+    else:
+        form = CustomRegistrationForm()
+
+    return render(request, 'register.html', {'form': form})
+
+def user_logout(request):
+    logout(request)
+    return redirect('user_login')
 
 def terms_conditions(request):
     return render(request, 'terms_conditions.html')

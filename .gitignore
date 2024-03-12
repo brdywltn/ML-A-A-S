@@ -2,5 +2,8 @@ myproject/node_modules
 myproject/env
 myproject/myapp/static/CACHE
 myproject/myapp/__pycache__
-.venv/
 .DS_Store
+myproject/myproject/__pycache__/__init__.cpython-312.pyc
+myproject/myproject/__pycache__/settings.cpython-312.pyc
+myproject/myproject/__pycache__/urls.cpython-312.pyc
+.venv/
