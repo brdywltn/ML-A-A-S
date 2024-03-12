@@ -32,6 +32,17 @@ def preprocess_audio_for_inference(audio_path):
 audio_path = './static/src/media/Casio Piano C5 1980s.wav'  # Update this path
 preprocessed_data = preprocess_audio_for_inference(audio_path)
 
+# print(f"Number of windows: {len(preprocessed_data)}")
+# print(f"Value array: {preprocessed_data[0]}")
+
+# Write preprocessed data values to a text file
+# with open('G53_data.txt', 'w') as file:
+#     for window in preprocessed_data:
+#         for value in window.flatten():
+#             file.write(str(value) + '\n')
+# print("Preprocessed data values written to preprocessed_data.txt")
+
+
 # TensorFlow Serving URL
 url = 'http://localhost:8501/v1/models/instrument_model:predict'
 
