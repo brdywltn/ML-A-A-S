@@ -96,15 +96,3 @@ def generate_pdf(request):
 
     return response
 
-
-#For testing the receipts ONLY. TODO: delete when working
-def generate_pdf(request):
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="example.pdf"'
-
-    p = canvas.Canvas(response)
-    p.drawString(100, 800, "Hello, this is a PDF!")
-    p.showPage()
-    p.save()
-
-    return response
