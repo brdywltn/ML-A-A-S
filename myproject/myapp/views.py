@@ -34,6 +34,9 @@ def handling_music_file(request):
     log_data = get_log_data(Action.invalid_file, 'error')
     # create_log(None, log_data)
     return HttpResponse('File invalid',log_data)
+from .models import User
+from django.http import HttpResponse
+from reportlab.pdfgen import canvas
 
 def index(request):
     #for now this authenication just returns the main view
@@ -80,3 +83,16 @@ def privacy_policy(request):
 
 def pricing(request):
     return render(request, 'pricing.html')
+
+#For testing the receipts ONLY. TODO: delete when working
+def generate_pdf(request):
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="example.pdf"'
+
+    p = canvas.Canvas(response)
+    p.drawString(100, 800, "Hello, this is a PDF!")
+    p.showPage()
+    p.save()
+
+    return response
+
