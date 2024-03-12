@@ -2,7 +2,7 @@
 version: '3.8'
 services:
   db:
-    image: postgres:13
+    image: postgres:16.1
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
@@ -36,6 +36,20 @@ services:
     volumes:
       - .:/usr/src/app
       - static_volume:/usr/src/app/static
+
+  tensorflow_serving:
+    image: tensorflow/serving
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./models:/models
+    environment:
+      - MODEL_NAME=instrument_model
+      - MODEL_BASE_PATH=/models/instrument_model
+    command:
+      - --model_base_path=/models/instrument_model
+      - --rest_api_port=8501
+      - --model_name=instrument_model
 
 volumes:
   static_volume:

@@ -3,7 +3,7 @@
   class="grid grid-cols-1 px-4 pt-6 xl:grid-cols-3 xl:gap-4 dark:bg-grey-300"
 >
   <div class="mb-4 col-span-full xl:mb-2">
-    <h1 class="text-xl font-semibold text-gray-300 sm:text-2xl dark:text-white">
+    <h1 class="text-xl font-semibold text-gray-800 sm:text-2xl dark:text-white">
       User settings
     </h1>
   </div>
@@ -232,12 +232,14 @@
             required
           />
         </div>
+        <a href="{% url 'generate_pdf' %}"
         <button
           type="submit"
           class="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
         >
           Download Financial Statement
         </button>
+        </a>
       </form>
       {% comment %} REPLACE WITH LOGIC TO CHECK PROPER USER {% endcomment %}
     </div>
