@@ -13,6 +13,7 @@ from .views import handling_music_file
 
 from .views import pricing
 from .views import generate_pdf
+from .views import generate_pdf
 
 urlpatterns = [
     # path('', index, name='index'), <- uncomment when index/main page will be ready
