@@ -3,6 +3,8 @@ from django.template import RequestContext
 import logging
 from django.http import HttpResponse
 from django.utils import timezone
+
+from .forms import InstrumentDetectionForm
 from .models import Log, Action
 
 logger = logging.getLogger(__name__)
@@ -45,7 +47,8 @@ def index(request):
         else:
             return render(request, 'index1.html')
     else:
-        return render(request, 'index1.html')
+        audio_form = InstrumentDetectionForm()
+        return render(request, 'index1.html', {'form': audio_form})
 
 def users(request):
     return render(request, 'user_page.html')
