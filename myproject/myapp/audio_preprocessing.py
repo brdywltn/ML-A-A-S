@@ -29,7 +29,7 @@ def preprocess_audio_for_inference(audio_path):
     return preprocessed_windows
 
 # Preprocess your audio file
-audio_path = './static/src/media/Casio Piano C5 1980s.wav'  # Update this path
+audio_path = './static/src/media/80_Gm_LofiPiano_02_823.wav'  # Update this path
 preprocessed_data = preprocess_audio_for_inference(audio_path)
 
 # print(f"Number of windows: {len(preprocessed_data)}")
@@ -44,7 +44,7 @@ preprocessed_data = preprocess_audio_for_inference(audio_path)
 
 
 # TensorFlow Serving URL
-url = 'http://localhost:8501/v1/models/instrument_model:predict'
+url = 'http://localhost:8501/v1/models/instrument_model/versions/2:predict'
 
 # Prepare data for TensorFlow Serving
 data = json.dumps({"signature_name": "serving_default", "instances": [window.tolist() for window in preprocessed_data]})
