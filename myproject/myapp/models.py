@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import User, Group, Permission 
+from django.contrib.auth.models import User, Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from enum import Enum
 
@@ -34,18 +34,18 @@ from enum import Enum
 
 
 class Action(Enum):
-    UPLOAD_FILE = 'upload_file'
-    LOGIN = 'login'
-    REGISTER = 'register'
-    PAYMENT = 'payment'
-    GENERATE_FINANCIAL_STATEMENT = 'generate_financial_statement'
-    CHANGE_MLA = 'change_MLA'
-    RUN_ALGORITHM = 'run_algorithm'
-    INVALID_FILE = 'invalid_file'
-    INVALID_PASSWORD = 'invalid_password'
-    USER_DOES_NOT_EXIST = 'user_does_not_exist'
-    DOWNLOAD_BREAKDOWN = 'download_breakdown'
-    UNKNOWN = 'unknown'
+    UPLOAD_FILE = "The user has successfully uploaded a file."
+    LOGIN = "The user has logged in to their account."
+    REGISTER = "The user has registered for a new account."
+    PAYMENT_SUCCESSFUL = "The user has successfully made a payment."
+    GENERATE_FINANCIAL_STATEMENT = "The user has generated a financial statement."
+    CHANGE_MLA = "The user has changed their maximum loss amount (MLA)."
+    RUN_ALGORITHM = "The user has run an algorithm."
+    INVALID_FILE = "The uploaded file is invalid and cannot be processed."
+    INVALID_PASSWORD = "The user has entered an invalid password."
+    USER_DOES_NOT_EXIST = "The user does not exist in the system."
+    DOWNLOAD_BREAKDOWN = "The user has downloaded a breakdown of their data."
+    UNKNOWN = "An unknown error has occurred."
 
 # class Logs(models.Model):
 #     """

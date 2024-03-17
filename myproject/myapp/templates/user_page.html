@@ -9,53 +9,7 @@
   </div>
   <!-- Right Content -->
   <div class="col-span-full xl:col-auto">
-    <div
-      class="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800"
-    >
-      <div
-        class="items-center sm:flex xl:block 2xl:flex sm:space-x-4 xl:space-x-0 2xl:space-x-4"
-      >
-        <img
-          class="mb-4 rounded-full w-28 h-28 sm:mb-0 xl:mb-4 2xl:mb-0"
-          src="https://i.pravatar.cc/300
-"
-          alt="Jese picture"
-        />
-        <div>
-          <h3 class="mb-1 text-xl font-bold text-grey-300 dark:text-white">
-            Profile picture
-          </h3>
-          <div class="mb-4 text-sm text-gray-500 dark:text-gray-400">
-            JPG, GIF or PNG. Max size of 800K
-          </div>
-          <div class="flex items-center space-x-4">
-            <button
-              type="button"
-              class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-            >
-              <svg
-                class="w-4 h-4 mr-2 -ml-1"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M5.5 13a3.5 3.5 0 01-.369-6.98 4 4 0 117.753-1.977A4.5 4.5 0 1113.5 13H11V9.413l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13H5.5z"
-                ></path>
-                <path d="M9 13h2v5a1 1 0 11-2 0v-5z"></path>
-              </svg>
-              Upload picture
-            </button>
-            <button
-              type="button"
-              class="py-2 px-3 text-sm font-medium text-grey-300 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-            >
-              Delete
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+
     <div
       class="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800"
     >
@@ -337,30 +291,12 @@
         >
           <tr>
             <th scope="col" class="px-6 py-3">Date</th>
-            <th scope="col" class="px-6 py-3">File name</th>
             <th scope="col" class="px-6 py-3">Action</th>
+            <th scope="col" class="px-6 py-3">Details</th>
           </tr>
         </thead>
         <tbody>
-          {% comment %} MOCK DATA REPLACE WITH REAL DATA {% endcomment %}
-          <tr
-            class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700"
-          >
-            <th
-              scope="row"
-              class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-            >
-              17:45 17.02.2024
-            </th>
-            <td class="px-6 py-4">some_music_1.mp3</td>
-            <td class="px-6 py-4">
-              <a
-                href="#"
-                class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                >Download</a
-              >
-            </td>
-          </tr>
+          {% for entry in user_data %}
 
           <tr
             class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700"
@@ -369,74 +305,17 @@
               scope="row"
               class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
             >
-              18:30 18.02.2024
-            </th>
-            <td class="px-6 py-4">some_music_2.mp3</td>
+{{entry.date}}            </th>
+            <td class="px-6 py-4">{{entry.action}}</td>
             <td class="px-6 py-4">
               <a
                 href="#"
                 class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                >Download</a
+                >{{entry.file}}</a
               >
             </td>
           </tr>
-
-          <tr
-            class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700"
-          >
-            <th
-              scope="row"
-              class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-            >
-              19:15 19.02.2024
-            </th>
-            <td class="px-6 py-4">some_music_3.mp3</td>
-            <td class="px-6 py-4">
-              <a
-                href="#"
-                class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                >Download</a
-              >
-            </td>
-          </tr>
-
-          <tr
-            class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700"
-          >
-            <th
-              scope="row"
-              class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-            >
-              20:00 20.02.2024
-            </th>
-            <td class="px-6 py-4">some_music_4.mp3</td>
-            <td class="px-6 py-4">
-              <a
-                href="#"
-                class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                >Download</a
-              >
-            </td>
-          </tr>
-
-          <tr
-            class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700"
-          >
-            <th
-              scope="row"
-              class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-            >
-              20:45 21.02.2024
-            </th>
-            <td class="px-6 py-4">some_music_5.mp3</td>
-            <td class="px-6 py-4">
-              <a
-                href="#"
-                class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                >Download</a
-              >
-            </td>
-          </tr>
+          {%endfor%}
         </tbody>
       </table>
     </div>
@@ -459,11 +338,11 @@
             <th scope="col" class="px-6 py-3">Date</th>
             <th scope="col" class="px-6 py-3">Action</th>
             <th scope="col" class="px-6 py-3">User ID</th>
-            <th scope="col" class="px-6 py-3">User Email</th>
+            <th scope="col" class="px-6 py-3">status</th>
           </tr>
         </thead>
         <tbody>
-          {% comment %} MOCK DATA REPLACE WITH REAL LOGS {% endcomment %}
+          {% for entry in admin_data %}
           <tr
             class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700"
           >
@@ -471,98 +350,19 @@
               scope="row"
               class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
             >
-              17:45 17.02.2024
-            </td>
+{{entry.date}}          </td>
             <td class="px-6 py-4">
               <a
                 href="#"
                 class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                >Download</a
+                >{{entry.action}}</a
               >
             </td>
-            <td class="px-6 py-4">123</td>
-            <td class="px-6 py-4">user1@example.com</td>
-          </tr>
-
-          <tr
-            class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700"
-          >
-            <td
-              scope="row"
-              class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-            >
-              21:30 22.02.2024
-            </td>
+            <td class="px-6 py-4">{{entry.user}}</td>
             <td class="px-6 py-4">
-              <a
-                href="#"
-                class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                >Upload</a
-              >
-            </td>
-            <td class="px-6 py-4">456</td>
-            <td class="px-6 py-4">user2@example.com</td>
+            {{entry.status}}</td>
           </tr>
-
-          <tr
-            class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700"
-          >
-            <td
-              scope="row"
-              class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-            >
-              22:15 23.02.2024
-            </td>
-            <td class="px-6 py-4">
-              <a
-                href="#"
-                class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                >Delete</a
-              >
-            </td>
-            <td class="px-6 py-4">789</td>
-            <td class="px-6 py-4">user3@example.com</td>
-          </tr>
-
-          <tr
-            class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700"
-          >
-            <td
-              scope="row"
-              class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-            >
-              23:00 24.02.2024
-            </td>
-            <td class="px-6 py-4">
-              <a
-                href="#"
-                class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                >Modify</a
-              >
-            </td>
-            <td class="px-6 py-4">101</td>
-            <td class="px-6 py-4">user4@example.com</td>
-          </tr>
-
-          <tr
-            class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700"
-          >
-            <td
-              scope="row"
-              class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-            >
-              23:45 25.02.2024
-            </td>
-            <td class="px-6 py-4">
-              <a
-                href="#"
-                class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                >View</a
-              >
-            </td>
-            <td class="px-6 py-4">112</td>
-            <td class="px-6 py-4">user5@example.com</td>
-          </tr>
+          {% endfor %}
         </tbody>
       </table>
     </div>

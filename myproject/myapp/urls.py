@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import index, users, maintenance, handler404, handler500, register, user_login, terms_conditions, privacy_policy, handling_music_file, pricing, generate_pdf
+from .views import index, users, maintenance, handler404, handler500, register, user_login, terms_conditions, privacy_policy, handling_music_file, pricing, generate_pdf, admin_table
 
 
 urlpatterns = [
@@ -17,5 +17,6 @@ urlpatterns = [
     path('uploading_file/', handling_music_file, name='uploading_file'),
     path('generate_pdf/', generate_pdf, name='generate_pdf'),
     path('pricing/', pricing, name='pricing'),
-    path('generate_pdf/', generate_pdf, name='generate_pdf')
+    path('generate_pdf/', generate_pdf, name='generate_pdf'),
+    path('admin_table/', admin_table, name='admin_table')
 ]
