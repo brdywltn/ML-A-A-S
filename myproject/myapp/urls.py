@@ -1,10 +1,10 @@
 from django.urls import path
-from .views import index, users, maintenance, handler404, handler500, register, user_login, terms_conditions, privacy_policy, handling_music_file, pricing, generate_pdf, admin_table
+from .views import InstrumentDetectionView, index, users, maintenance, handler404, handler500, register, user_login, terms_conditions, privacy_policy, handling_music_file, pricing, generate_pdf, admin_table
 
 
 urlpatterns = [
     # path('', index, name='index'), <- uncomment when index/main page will be ready
-    path('', index),
+    path('', index, name='index'),
     path('user/', users, name='users'),
     path('404/', handler404),
     path('500/', handler500),
@@ -18,5 +18,7 @@ urlpatterns = [
     path('generate_pdf/', generate_pdf, name='generate_pdf'),
     path('pricing/', pricing, name='pricing'),
     path('generate_pdf/', generate_pdf, name='generate_pdf'),
-    path('admin_table/', admin_table, name='admin_table')
+    path('admin_table/', admin_table, name='admin_table'),
+    path('instrument_detection/', InstrumentDetectionView.as_view(), name='instrument_detection')
+
 ]

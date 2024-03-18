@@ -20,6 +20,7 @@ services:
       - static_volume:/usr/src/app/static
     depends_on:
       - db
+      - tensorflow_serving
     environment:
       DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
       DEBUG: ${DEBUG}

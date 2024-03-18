@@ -16,6 +16,13 @@ from .models import Log, Action, User
 from django.http import JsonResponse
 from django.db import connection
 
+# Django Rest Framework imports
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from .serializers import InstrumentDetectionSerializer
+from .audio_preprocessing import preprocess_audio_for_inference
+import requests
 
 logger = logging.getLogger(__name__)
 
@@ -89,19 +96,42 @@ def user_table(request):
     return JsonResponse({'data': data}, safe=False)
 
 def index(request):
-    #for now this authenication just returns the main view
-    #when user auth is done change the else to return index2.html
+    # Initialize default context
+    context = {'form': InstrumentDetectionForm(), 
+               'predictions': [],
+               'file_name': None
+               }
+    
+    # Handle authenticated users
     if request.user.is_authenticated:
         if request.method == 'POST':
-            if request.FILES['audio_file'] != None:
-                uploaded_file = request.FILES['audio_file']
-                # Do something with the uploaded file
-            return render(request, 'index1.html')
-        else:
-            return render(request, 'index1.html')
+            # Assuming you want to do something specific with the file if it's uploaded
+            uploaded_file = request.FILES.get('audio_file')
+            if uploaded_file:
+                # Process the uploaded file as needed
+                pass
+            # For now, just render the main page again, potentially after handling the uploaded file
+        # For GET requests or if POST doesn't involve a file, just show the main page
+        return render(request, 'index1.html')
+
+    # Handle unauthenticated users
     else:
-        audio_form = InstrumentDetectionForm()
-        return render(request, 'index1.html', {'form': audio_form})
+        if request.method == 'POST':
+            form = InstrumentDetectionForm(request.POST, request.FILES)
+            if form.is_valid() and 'audio_file' in request.FILES:
+                uploaded_file = request.FILES['audio_file']
+                context['file_name'] = uploaded_file.name
+                # Make a request to the InstrumentDetectionView to get the predictions
+                view = InstrumentDetectionView().as_view()
+                response = view(request)
+                # Ensure there's a response and it contains predictions before updating context
+                if response and hasattr(response, 'data') and 'predictions' in response.data:
+                    context['predictions'] = response.data['predictions']
+            else:
+                context['form'] = form
+        # For GET requests or if form is not valid, render the page with the default or updated context
+        return render(request, 'index1.html', context)
+
 
 def users(request):
     # Make a request to the admin_table view to get the data
@@ -188,3 +218,55 @@ def generate_pdf(request):
     p.save()
 
     return response
+
+# Running the audio file through the model
+class InstrumentDetectionView(APIView):
+    def post(self, request):
+        serializer = InstrumentDetectionSerializer(data=request.data)
+        if serializer.is_valid():
+            audio_file = serializer.validated_data['audio_file']
+            
+            # Save the uploaded file temporarily
+            with open('temp_audio.wav', 'wb') as f:
+                f.write(audio_file.read())
+            
+            # Preprocess the audio file
+            preprocessed_data = preprocess_audio_for_inference('temp_audio.wav')
+            
+            # Prepare data for TensorFlow Serving
+            data = json.dumps({"signature_name": "serving_default", "instances": [window.tolist() for window in preprocessed_data]})
+            
+            # Send request to TensorFlow Serving
+            url = 'http://tensorflow_serving:8501/v1/models/instrument_model/versions/2:predict'
+            headers = {"Content-Type": "application/json"}
+            response = requests.post(url, data=data, headers=headers)
+            
+            # Process the response
+            if response.status_code == 200:
+                raw_predictions = response.json()['predictions']
+                # Convert raw prediction numbers into percentages
+                formatted_predictions = self.format_predictions(raw_predictions)
+                return Response({"predictions": formatted_predictions}, status=status.HTTP_200_OK)
+            else:
+                return Response({"error": "Failed to get predictions"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def convert_to_percentages(self, predictions):
+        # Assuming predictions is a list of lists
+        percentage_predictions = []
+        for prediction in predictions:
+            total = sum(prediction)
+            # Convert each number to a percentage of the total, rounded to 2 decimal places
+            percentages = [round((number / total) * 100, 2) for number in prediction]
+            percentage_predictions.append(percentages)
+        return percentage_predictions
+    
+    def format_predictions(self, predictions):
+        instruments = ['Guitar', 'Drum', 'Violin', 'Piano']
+        formatted_predictions = []
+        for window_index, prediction in enumerate(predictions, start=1):
+            formatted_window = f"<strong>Window {window_index}</strong><br>"
+            formatted_scores = "<br>".join([f"{instruments[i]} - {score:.2f}" for i, score in enumerate(prediction)])
+            formatted_predictions.append(f"{formatted_window}{formatted_scores}")
+        return formatted_predictions
