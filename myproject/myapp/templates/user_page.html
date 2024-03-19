@@ -9,8 +9,11 @@
   </div>
   <!-- Right Content -->
   <div class="col-span-full xl:col-auto">
-
-    <div
+    <div class="p-4 mb-4 bg-white border boder-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
+      <h3 class="mb-4 text-xl font-semibold dark:text-white">Change your password</h3>
+      <a href="{% url 'password_change' %}" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Change Password</a>
+    </div>
+    <!-- <div
       class="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800"
     >
       <h3 class="mb-4 text-xl font-semibold dark:text-white">
@@ -145,7 +148,7 @@
         </div>
       </form>
       {% comment %} REPLACE WITH LOGIC TO CHECK PROPER USER {% endcomment %}
-    </div>
+    </div> -->
     {% if 1 %}
     <div
       class="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800"
