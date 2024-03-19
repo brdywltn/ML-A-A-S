@@ -31,6 +31,13 @@ WORKDIR /usr/src/app
 COPY ./requirements.txt .
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
+# Update the package list
+RUN apt-get update
+
+# Install libsndfile
+RUN apt-get install -y libsndfile1
+
+
 # Copy project files from the builder stage and the current directory
 COPY --from=builder /usr/src/app/myapp/static ./myapp/static
 COPY . .
