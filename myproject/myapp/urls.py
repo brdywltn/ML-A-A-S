@@ -20,8 +20,7 @@ urlpatterns = [
     path('pricing/', pricing, name='pricing'),
     path('generate_pdf/', generate_pdf, name='generate_pdf'),
     path('admin_table/', admin_table, name='admin_table'),
-    path('instrument_detection/', InstrumentDetectionView.as_view(), name='instrument_detection')
-
+    path('instrument_detection/', InstrumentDetectionView.as_view(), name='instrument_detection'),
     path('password_change/', auth_views.PasswordChangeView.as_view(template_name='password_change_form.html'), name='password_change'),
-    path('password_change/done/', auth_views.PasswordChangeDoneView.as_view(template_name='password_change_done.html'), name='password_change_done'),
+    path('password_change/done/', auth_views.PasswordChangeDoneView.as_view(template_name='password_change_done.html'), name='password_change_done')
 ]
