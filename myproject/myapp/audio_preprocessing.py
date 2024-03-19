@@ -28,36 +28,36 @@ def preprocess_audio_for_inference(audio_path):
         preprocessed_windows.append(mel_db_resized)
     return preprocessed_windows
 
-# Preprocess your audio file
-audio_path = './static/src/media/80_Gm_LofiPiano_02_823.wav'  # Update this path
-preprocessed_data = preprocess_audio_for_inference(audio_path)
+# # Preprocess your audio file
+# audio_path = './static/src/media/80_Gm_LofiPiano_02_823.wav'  # Update this path
+# preprocessed_data = preprocess_audio_for_inference(audio_path)
 
-# print(f"Number of windows: {len(preprocessed_data)}")
-# print(f"Value array: {preprocessed_data[0]}")
+# # print(f"Number of windows: {len(preprocessed_data)}")
+# # print(f"Value array: {preprocessed_data[0]}")
 
-# Write preprocessed data values to a text file
-# with open('G53_data.txt', 'w') as file:
-#     for window in preprocessed_data:
-#         for value in window.flatten():
-#             file.write(str(value) + '\n')
-# print("Preprocessed data values written to preprocessed_data.txt")
+# # Write preprocessed data values to a text file
+# # with open('G53_data.txt', 'w') as file:
+# #     for window in preprocessed_data:
+# #         for value in window.flatten():
+# #             file.write(str(value) + '\n')
+# # print("Preprocessed data values written to preprocessed_data.txt")
 
 
-# TensorFlow Serving URL
-url = 'http://localhost:8501/v1/models/instrument_model/versions/2:predict'
+# # TensorFlow Serving URL
+# url = 'http://localhost:8501/v1/models/instrument_model/versions/2:predict'
 
-# Prepare data for TensorFlow Serving
-data = json.dumps({"signature_name": "serving_default", "instances": [window.tolist() for window in preprocessed_data]})
+# # Prepare data for TensorFlow Serving
+# data = json.dumps({"signature_name": "serving_default", "instances": [window.tolist() for window in preprocessed_data]})
 
-# Send request
-headers = {"Content-Type": "application/json"}
-response = requests.post(url, data=data, headers=headers)
+# # Send request
+# headers = {"Content-Type": "application/json"}
+# response = requests.post(url, data=data, headers=headers)
 
-# Process response
-if response.status_code == 200:
-    predictions = response.json()['predictions']
-    # Process your predictions as needed
-    print(predictions)
-else:
-    print(f"Failed to get predictions, status code: {response.status_code}, response text: {response.text}")
+# # Process response
+# if response.status_code == 200:
+#     predictions = response.json()['predictions']
+#     # Process your predictions as needed
+#     print(predictions)
+# else:
+#     print(f"Failed to get predictions, status code: {response.status_code}, response text: {response.text}")
 

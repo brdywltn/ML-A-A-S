@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'myapp',
     'compressor',
+    'rest_framework',
 ]
 
 STATICFILES_DIRS = [

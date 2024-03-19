@@ -23,10 +23,9 @@
       <form enctype="multipart/form-data" method="post" id="uploadForm">
         {% csrf_token %}
         {{ form.audio_file }}
-        <button type="reset" class="text-gray-800 bg-white hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-300 dark:hover:bg-gray-400 dark:focus:ring-gray-500 dark:border-gray-500">
-          Clear
-        </button>
-        <button type="submit" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
+        <a href="/" class="text-gray-800 bg-white hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-300 dark:hover:bg-gray-400 dark:focus:ring-gray-500 dark:border-gray-500">
+          Clear</a>
+        <button type="submit" id="runAlgorithmButton"  class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
           Run Algorithm
         </button>
       </form>
@@ -36,44 +35,49 @@
     <div id="player" class="py-8 px-4 mx-auto max-w-screen-xl lg:py-8 hidden">
       <div id="waveform" class="w-full h-32 m-4"></div>
       <button id="playButton" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700 w-full" disabled>Play</button>
-  </div>
+    </div>
+    
+    
+    {% if predictions %}
+    <div id="predictions" class="py-8 px-4 mx-auto max-w-screen-xl">
+      <h3 class="text-2xl font-bold mb-4">{{ file_name }} Predictions:</h3>
+      <ul id="predictionList" class="space-y-2">
+        {% for prediction in predictions %}
+          <li class="bg-gray-100 dark:bg-gray-800 px-4 py-2 rounded-md" style="white-space: pre-line;">{{ prediction|safe }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+  </section>
+
+
   <script>
-      var wavesurfer = WaveSurfer.create({
-          container: '#waveform',
-          waveColor: 'gray',
-          progressColor: '#f9f1f1'
-      });
-      function loadAudioFile(event) {
+
+function loadAudioFile(event) {
         var file = event.target.files[0];
-        var reader = new FileReader();
-        reader.onload = function(e) {
+        if (file) {
             wavesurfer.loadBlob(file);
             document.getElementById('player').classList.remove('hidden');
-            submitForm();  // Submit the form
+            wavesurfer.on('ready', function () {
+                document.getElementById('playButton').disabled = false;
+            });
         }
-        reader.readAsDataURL(file);
     }
-      wavesurfer.on('ready', function () {
-          document.getElementById('playButton').disabled = false;
-      });
-      document.getElementById('playButton').addEventListener('click', function () {
-          wavesurfer.playPause();
-          this.textContent = wavesurfer.isPlaying() ? 'Stop' : 'Play';
-      });
-      wavesurfer.on('play', function () {
-          document.getElementById('playButton').textContent = 'Stop';
-      });
-      wavesurfer.on('pause', function () {
-          document.getElementById('playButton').textContent = 'Play';
-      });
-      function submitForm() {
+
+    function submitForm() {
         var form = document.getElementById('uploadForm');
         var formData = new FormData(form);
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', '/uploading_file/', true);
-        xhr.setRequestHeader('X-CSRFToken', getCookie('csrftoken'));  // Include the CSRF token
-        xhr.send(formData);
+        formData.append('audio_file', document.getElementById('audioFileInput').files[0]);
+        fetch('/', {method: 'POST', body: formData, headers: {'X-CSRFToken': getCookie('csrftoken')}})
+        .then(response => response.text())
+        .then(html => {
+            document.body.innerHTML = html;
+            initializeWaveSurfer();
+            initializeEventListeners();
+        })
+        .catch(error => console.error('Error submitting form:', error));
     }
+
     // Function to get the CSRF token
     function getCookie(name) {
         var cookieValue = null;
@@ -89,8 +93,71 @@
         }
         return cookieValue;
     }
+
+    // Function to clear predictions and reset WaveSurfer
+    function clearFormAndPredictions() {
+        // Clear predictions div
+        var predictionsDiv = document.getElementById('predictions');
+        if (predictionsDiv) {
+            predictionsDiv.innerHTML = '';
+            predictionsDiv.classList.add('hidden');
+        }
+        
+        // Reset WaveSurfer
+        if (window.wavesurfer) {
+            wavesurfer.empty();
+            document.getElementById('playButton').disabled = true;
+        }
+    }
+
+
+    function initializeWaveSurfer() {
+      window.wavesurfer = WaveSurfer.create({
+          container: '#waveform',
+          waveColor: 'gray',
+          progressColor: '#f9f1f1'
+      });
+
+      wavesurfer.on('play', function () {
+          document.getElementById('playButton').textContent = 'Stop';
+      });
+
+      wavesurfer.on('pause', function () {
+          document.getElementById('playButton').textContent = 'Play';
+      });
+
+      document.getElementById('playButton').addEventListener('click', function () {
+          wavesurfer.playPause();
+          this.textContent = wavesurfer.isPlaying() ? 'Stop' : 'Play';
+      });
+  }
+
+    document.addEventListener('DOMContentLoaded', function() {
+    initializeWaveSurfer();
+    initializeEventListeners();
+  });
+
+    function initializeEventListeners() {
+        document.getElementById('runAlgorithmButton').addEventListener('click', function() {
+            if (document.getElementById('audioFileInput').files.length > 0) {
+                submitForm();
+            } else {
+                alert('Please select a file to upload.');
+            }
+        });
+
+        document.getElementById('audioFileInput').addEventListener('change', function(event) {
+            loadAudioFile(event);
+        });
+
+        // Function to reset the form and clear the predictions
+        document.getElementById('uploadForm').addEventListener('reset', function() {
+            clearFormAndPredictions();
+        });
+    }
+
+
   </script>
-</section>
 
 
 {% endblock content %}
