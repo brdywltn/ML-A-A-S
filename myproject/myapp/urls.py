@@ -23,5 +23,5 @@ urlpatterns = [
     path('instrument_detection/', InstrumentDetectionView.as_view(), name='instrument_detection'),
     path('password_change/', auth_views.PasswordChangeView.as_view(template_name='password_change_form.html'), name='password_change'),
     path('password_change/done/', auth_views.PasswordChangeDoneView.as_view(template_name='password_change_done.html'), name='password_change_done'),
-    path('logout/', auth_views.LogoutView.as_view(next_page=index), name='logout')
+    path('user_logout/', auth_views.LogoutView.as_view(next_page='index'), name='user_logout')
 ]
