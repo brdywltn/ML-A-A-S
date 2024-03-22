@@ -42,6 +42,7 @@ def create_payment(request):
         }]
     })
 
+<<<<<<< HEAD
     # Successfully communicated with API 
     if payment.create():
         print("Payment created successfully!")
@@ -100,3 +101,18 @@ def payment_cancelled(request):
 
 def payment_success(request):
     return render(request,'payment_success.html')
+=======
+    if payment.create():
+        print("Payment created successfully!")
+        for link in payment.links:
+            if link.rel == "approval_url":
+                approval_url = str(link.href)
+                print("Redirect for approval: %s" % (approval_url))
+                return JsonResponse({"approval_url": approval_url})
+    else:
+        print(payment.error)
+    return JsonResponse({"error": "Payment creation failed"})
+
+def execute_payment(request):
+    pass
+>>>>>>> d6d607c (Add create_payment)
