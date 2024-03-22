@@ -105,18 +105,6 @@ def index(request):
     # Handle authenticated users
     if request.user.is_authenticated:
         if request.method == 'POST':
-            # Assuming you want to do something specific with the file if it's uploaded
-            uploaded_file = request.FILES.get('audio_file')
-            if uploaded_file:
-                # Process the uploaded file as needed
-                pass
-            # For now, just render the main page again, potentially after handling the uploaded file
-        # For GET requests or if POST doesn't involve a file, just show the main page
-        return render(request, 'index1.html')
-
-    # Handle unauthenticated users
-    else:
-        if request.method == 'POST':
             form = InstrumentDetectionForm(request.POST, request.FILES)
             if form.is_valid() and 'audio_file' in request.FILES:
                 uploaded_file = request.FILES['audio_file']
@@ -130,7 +118,22 @@ def index(request):
             else:
                 context['form'] = form
         # For GET requests or if form is not valid, render the page with the default or updated context
-        return render(request, 'index1.html', context)
+        return render(request, 'index1.html', context)        
+
+    # Handle unauthenticated users
+    else:
+        if request.method == 'POST':
+            # Assuming you want to do something specific with the file if it's uploaded
+            uploaded_file = request.FILES.get('audio_file')
+            if uploaded_file:
+                # Process the uploaded file as needed
+                pass
+            # For now, just render the main page again, potentially after handling the uploaded file
+        # For GET requests or if POST doesn't involve a file, just show the main page
+        return render(request, 'index2.html')
+
+
+        
 
 
 def users(request):
@@ -270,3 +273,11 @@ class InstrumentDetectionView(APIView):
             formatted_scores = "<br>".join([f"{instruments[i]} - {score:.2f}" for i, score in enumerate(prediction)])
             formatted_predictions.append(f"{formatted_window}{formatted_scores}")
         return formatted_predictions
+
+
+def user_has_credits():
+    has_credits = False
+
+
+
+    return has_credits
