@@ -230,11 +230,11 @@ class InstrumentDetectionView(APIView):
             audio_file = serializer.validated_data['audio_file']
             
             # Save the uploaded file temporarily
-            with open('temp_audio.wav', 'wb') as f:
-                f.write(audio_file.read())
+            # with open('temp_audio.wav', 'wb') as f:
+            #     f.write(audio_file.read())
             
             # Preprocess the audio file
-            preprocessed_data = preprocess_audio_for_inference('temp_audio.wav')
+            preprocessed_data = preprocess_audio_for_inference(audio_file)
             
             # Prepare data for TensorFlow Serving
             data = json.dumps({"signature_name": "serving_default", "instances": [window.tolist() for window in preprocessed_data]})
