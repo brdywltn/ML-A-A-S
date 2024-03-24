@@ -5,7 +5,6 @@ from .views import InstrumentDetectionView, index, users, maintenance, handler40
 =======
 from .views import InstrumentDetectionView, index, users, maintenance, handler404, handler500, register, user_login, terms_conditions, privacy_policy, handling_music_file, pricing, generate_pdf, admin_table
 from .payments import create_payment, execute_payment, payment_cancelled, payment_success
->>>>>>> 7991a04 (Add PayPal integration- need to link in new model for usertokens)
 from django.contrib.auth import views as auth_views
 
 # Authentication
@@ -31,7 +30,11 @@ urlpatterns = [
     path('instrument_detection/', InstrumentDetectionView.as_view(), name='instrument_detection'),
     path('password_change/', auth_views.PasswordChangeView.as_view(template_name='password_change_form.html'), name='password_change'),
     path('password_change/done/', auth_views.PasswordChangeDoneView.as_view(template_name='password_change_done.html'), name='password_change_done'),
-    # path('user_logout/', auth_views.LogoutView.as_view(next_page='index'), name='user_logout')
+    # path('user_logout/', auth_views.LogoutView.as_view(next_page='index'), name='user_logout'),
+    path('payment/create/', create_payment, name='create_payment'),
+    path('payment/execute/', execute_payment, name='execute_payment'),
+    path('payment/cancel/', payment_cancelled, name='payment_cancelled'),
+    path('payment_success/', payment_success, name='success')
 
     # Authentication
     path('login/', CustomLoginView.as_view(), name='login'),
