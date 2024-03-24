@@ -1,7 +1,11 @@
 from django.urls import path
 
+<<<<<<< HEAD
+from .views import InstrumentDetectionView, index, users, maintenance, handler404, handler500, terms_conditions, privacy_policy, handling_music_file, pricing, generate_pdf, admin_table
+=======
 from .views import InstrumentDetectionView, index, users, maintenance, handler404, handler500, register, user_login, terms_conditions, privacy_policy, handling_music_file, pricing, generate_pdf, admin_table
 from .payments import create_payment, execute_payment, payment_cancelled, payment_success
+>>>>>>> 7991a04 (Add PayPal integration- need to link in new model for usertokens)
 from django.contrib.auth import views as auth_views
 
 # Authentication
