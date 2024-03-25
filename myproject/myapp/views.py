@@ -11,7 +11,7 @@ from reportlab.pdfgen import canvas
 import json
 from datetime import datetime
 
-from .forms import InstrumentDetectionForm, CustomRegistrationForm, LoginForm
+from .forms import InstrumentDetectionForm
 from .models import Log, Action, User
 from django.http import JsonResponse
 from django.db import connection
@@ -23,6 +23,13 @@ from rest_framework import status
 from .serializers import InstrumentDetectionSerializer
 from .audio_preprocessing import preprocess_audio_for_inference
 import requests
+
+# Authentication Imports
+from django.urls import reverse_lazy
+from django.views import generic
+from .models import Profile
+from .forms import UserRegisterForm, LoginAuthenticationForm
+from django.contrib.auth.views import LoginView
 
 logger = logging.getLogger(__name__)
 
@@ -163,43 +170,61 @@ def handler500(request, *args, **kwargs):
 def maintenance(request):
     return render(request, 'maintenance.html')
 
-def user_login(request):
-    if request.method == 'POST':
-        form = LoginForm(request.POST)
+# def user_login(request):
+#     if request.method == 'POST':
+#         form = LoginForm(request.POST)
 
-        if form.is_valid():
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
+#         if form.is_valid():
+#             username = form.cleaned_data.get('username')
+#             password = form.cleaned_data.get('password')
 
-            user = authenticate(request, username=username, password=password)  # Passing request along with username and password
+#             user = authenticate(request, username=username, password=password)  # Passing request along with username and password
 
-            if user:
-                login(request, user=user)  # Passing request along with user
-                return redirect('users')
-            else:
-                messages.error(request, 'Invalid username or password.')
-        else:
-            pass
+#             if user:
+#                 login(request, user=user)  # Passing request along with user
+#                 return redirect('users')
+#             else:
+#                 messages.error(request, 'Invalid username or password.')
+#         else:
+#             pass
 
-    else:
-        form = LoginForm()
-    return render(request, 'login.html', {'form': form})
+#     else:
+#         form = LoginForm()
+#     return render(request, 'login.html', {'form': form})
 
 
-def register(request):
-    if request.method == 'POST':
-        form = CustomRegistrationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('user_login')
-    else:
-        form = CustomRegistrationForm()
+# def register(request):
+#     if request.method == 'POST':
+#         form = CustomRegistrationForm(request.POST)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('user_login')
+#     else:
+#         form = CustomRegistrationForm()
 
-    return render(request, 'register.html', {'form': form})
+#     return render(request, 'register.html', {'form': form})
 
-def user_logout(request):
-    logout(request)
-    return redirect('user_login')
+# def user_logout(request):
+#     logout(request)
+#     return redirect('user_login')
+
+
+# Authentication
+class RegisterView(generic.CreateView):
+    form_class = UserRegisterForm
+    success_url = reverse_lazy('login')
+    template_name = 'registration/register.html'
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        Profile.objects.create(user=self.object, user_type=0)  # Default user type as Basic User
+        return response
+    
+
+class CustomLoginView(LoginView):
+    authentication_form = LoginAuthenticationForm
+    template_name = 'registration/login.html'  
+
 
 def terms_conditions(request):
     return render(request, 'terms_conditions.html')

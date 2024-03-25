@@ -18,7 +18,7 @@ from enum import Enum
 # for group_name in group_names:
 #     Group.objects.get_or_create(name=group_name)
 
-# assign group permissions
+# # assign group permissions
 # content_type = ContentType.objects.get_for_model(UserTypes)
 # permission = Permission.objects.create(codename='can_view_user',
 #                                        name='Can View User',
@@ -30,7 +30,21 @@ from enum import Enum
 # User = get_user_model()
 
 # user = User.objects.create_user('username', 'email', 'password')
-#names are not necessary - reduces gdpr concerns aswell
+# # names are not necessary - reduces gdpr concerns aswell
+
+class Profile(models.Model):
+    USER_TYPES = (
+        (0, 'Basic User'),
+        (1, 'Admin'),
+        (2, 'ML Engineer'),
+        (3, 'Accountant'),
+    )
+    
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user_type = models.IntegerField(choices=USER_TYPES, default=0)
+
+    def __str__(self):
+        return f'{self.user.username} Profile'
 
 
 class Action(Enum):

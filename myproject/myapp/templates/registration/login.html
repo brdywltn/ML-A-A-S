@@ -8,13 +8,17 @@
                 </h1>
                 
                 
-                <form method="POST">
+                <form method="POST" class="space-y-6">
                     {% csrf_token %}
-                    {{ form.as_p }}
-                    <br>
-                    <button type="submit">Login</button>
-                    <br>
-                    <a href="{% url 'register' %}">New User: Create Account</a>
+                    <div class="space-y-4">
+                        {{ form.as_p }}
+                    </div>
+                    <button type="submit" class="w-full px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-500 focus:ring-blue-500 focus:ring-offset-blue-200 transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 ">
+                        Login
+                    </button>
+                    <div class="text-center">
+                        <a href="{% url 'register' %}" class="text-blue-500 hover:text-blue-600">New User? Create Account</a>
+                    </div>
                 </form>
                 
             </div>
