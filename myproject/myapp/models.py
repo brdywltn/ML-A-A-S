@@ -63,8 +63,8 @@ class UserTokenCount(models.Model):
 @receiver(post_save, sender=User)
 def create_or_update_user_profile(sender, instance, created, **kwargs):
     if created:
-        UserTokenCount.objects.create(user=instance)
-        # Profile.objects.create(user=instance)
+        UserTokenCount.objects.get_or_create(user=instance)
+        Profile.objects.get_or_create(user=instance)
     # instance.profile.save()
 
 class Action(Enum):
