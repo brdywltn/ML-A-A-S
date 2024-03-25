@@ -111,6 +111,8 @@ def index(request):
     
     # Handle authenticated users
     if request.user.is_authenticated:
+        token_count = UserTokenCount.objects.get(user=request.user).token_count
+        context['token_count'] = token_count
         if request.method == 'POST':
             form = InstrumentDetectionForm(request.POST, request.FILES)
             if form.is_valid() and 'audio_file' in request.FILES:
