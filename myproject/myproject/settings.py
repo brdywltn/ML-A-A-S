@@ -173,6 +173,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 IMAGE_URL = 'static/src/images/'
 
 LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
 
 
 #PayPal API settings

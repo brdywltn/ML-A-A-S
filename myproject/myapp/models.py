@@ -58,14 +58,7 @@ class UserTokenCount(models.Model):
 
     def __str__(self):
         return f'{self.user.username}\'s token count: {self.token_count}'
-    
-# Automatically create a UserTokenCount entry for each user on user creation
-@receiver(post_save, sender=User)
-def create_or_update_user_profile(sender, instance, created, **kwargs):
-    if created:
-        UserTokenCount.objects.get_or_create(user=instance)
-        Profile.objects.get_or_create(user=instance)
-    # instance.profile.save()
+
 
 class Action(Enum):
     UPLOAD_FILE = "The user has successfully uploaded a file."
