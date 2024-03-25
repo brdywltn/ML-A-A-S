@@ -12,7 +12,7 @@ import json
 from datetime import datetime
 
 from .forms import InstrumentDetectionForm
-from .models import Log, Action, User
+from .models import Log, Action, User, UserTokenCount
 from django.http import JsonResponse
 from django.db import connection
 
@@ -150,10 +150,12 @@ def users(request):
     data_user = user_table(request)
     admin_dict = json.loads(data_admin.content)
     user_dict = json.loads(data_user.content)
+    token_count = UserTokenCount.objects.get(user=request.user).token_count
     # Pass the data as a context variable to the template
     # !!! ADMIN DATA ONLY DISPLAYED AND GET IF USER IS ADMIN !!!
     context['admin_data'] = admin_dict['data']
     context['user_data'] = user_dict['data']
+    context['token_count'] = token_count
 
     return render(request, 'user_page.html', context)
 

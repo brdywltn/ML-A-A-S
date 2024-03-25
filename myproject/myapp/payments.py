@@ -5,12 +5,11 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.shortcuts import redirect, render
 from django.urls import reverse
+from .models import UserTokenCount
 
 # Create a payment that can be made via the PayPal API
 # Create a payment that can be made via the PayPal API
 def create_payment(request):
-
-
     # Configure PayPal SDK
     paypalrestsdk.configure({
         "mode": settings.PAYPAL_MODE,
@@ -92,13 +91,23 @@ def execute_payment(request):
         
         # increment user_tokens
         # commit changes
+        # TODO: Change something here such that the token amount added depends on a detail of the transaction,
+        #       i.e. £9.99 payment for one token or £24.99 for 
+        # 
+        add_tokens(user, tokens_purchased)
 
         return redirect('success')
     else:
         #TODO: Change this to a more appropriate error message
         print("exiting at the end of execute_payment()")
         return redirect('handler404')
-       
+
+
+def add_tokens(user, tokens):
+    token_count_instance, created = UserTokenCount.objects.get_or_create(user=user)
+    token_count_instance.token_count += tokens
+    token_count_instance.save()
+
 def payment_cancelled(request):
     return render(request, 'payment_cancelled.html')
 
