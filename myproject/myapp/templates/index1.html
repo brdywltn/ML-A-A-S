@@ -54,15 +54,26 @@
   <script>
 
 function loadAudioFile(event) {
-        var file = event.target.files[0];
-        if (file) {
-            wavesurfer.loadBlob(file);
-            document.getElementById('player').classList.remove('hidden');
-            wavesurfer.on('ready', function () {
-                document.getElementById('playButton').disabled = false;
-            });
-        }
+    var file = event.target.files[0];
+    if (file) {
+        wavesurfer.loadBlob(file);
+        document.getElementById('player').classList.remove('hidden');
+        wavesurfer.on('ready', function () {
+            document.getElementById('playButton').disabled = false;
+
+            // After player is loaded, make an AJAX request to create a log
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/log_fileupload', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.send(JSON.stringify({
+                'action': 'UPLOAD',
+                'status': 'success',
+                'file': file.name,
+                'description': 'File uploaded and player loaded'
+            }));
+        });
     }
+}
 
     function submitForm() {
         var form = document.getElementById('uploadForm');

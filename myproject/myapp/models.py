@@ -102,6 +102,7 @@ class Log(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     log = models.JSONField()
 
+
 # # LOGIN
 # log_data = get_log_data(Action.LOGIN, 'success', user=request.user.username)
 # create_log(log_data)

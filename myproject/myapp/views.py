@@ -30,6 +30,7 @@ from django.views import generic
 from .models import Profile
 from .forms import UserRegisterForm, LoginAuthenticationForm
 from django.contrib.auth.views import LoginView
+from django.views.decorators.csrf import csrf_exempt
 
 logger = logging.getLogger(__name__)
 
@@ -58,6 +59,22 @@ def handling_music_file(request):
     log_data = get_log_data(Action.invalid_file, 'error')
     create_log(None, log_data)
     return HttpResponse('File invalid',log_data)
+
+@csrf_exempt
+def log_fileupload(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        status = data.get('status')
+        file = data.get('file')
+        description = data.get('description')
+
+        if request.user.is_authenticated:
+            log_data = get_log_data(Action.UPLOAD_FILE, status, file, description)
+            create_log(request.user, log_data)
+
+        return JsonResponse({'message': 'Log created successfully'}, status=201)
+
+    return JsonResponse({'error': 'Invalid request'}, status=400)
 
 def admin_table(request):
     # Execute the query and fetch all rows
@@ -122,6 +139,10 @@ def index(request):
                 # Ensure there's a response and it contains predictions before updating context
                 if response and hasattr(response, 'data') and 'predictions' in response.data:
                     context['predictions'] = response.data['predictions']
+                    if request.user.is_authenticated:
+                        log_data = get_log_data(Action.RUN_ALGORITHM, 'success', file=uploaded_file.name,\
+                                                description=response.data["predictions"])
+                        create_log(request.user, log_data)
             else:
                 context['form'] = form
         # For GET requests or if form is not valid, render the page with the default or updated context
@@ -223,7 +244,16 @@ class RegisterView(generic.CreateView):
 
 class CustomLoginView(LoginView):
     authentication_form = LoginAuthenticationForm
-    template_name = 'registration/login.html'  
+    template_name = 'registration/login.html'
+
+    def form_valid(self, form):
+        # Create log if user is authenticated
+        login(self.request, form.get_user())
+
+        log_data = get_log_data(Action.LOGIN, 'success')
+        create_log(form.get_user(), log_data)
+
+        return super().form_valid(form)
 
 
 def terms_conditions(request):
@@ -280,15 +310,6 @@ class InstrumentDetectionView(APIView):
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-    def convert_to_percentages(self, predictions):
-        # Assuming predictions is a list of lists
-        percentage_predictions = []
-        for prediction in predictions:
-            total = sum(prediction)
-            # Convert each number to a percentage of the total, rounded to 2 decimal places
-            percentages = [round((number / total) * 100, 2) for number in prediction]
-            percentage_predictions.append(percentages)
-        return percentage_predictions
     
     def format_predictions(self, predictions):
         instruments = ['Guitar', 'Drum', 'Violin', 'Piano']

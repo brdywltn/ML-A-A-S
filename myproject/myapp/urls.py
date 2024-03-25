@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import InstrumentDetectionView, index, users, maintenance, handler404, handler500, terms_conditions, privacy_policy, handling_music_file, pricing, generate_pdf, admin_table
+from .views import InstrumentDetectionView, index, log_fileupload, users, maintenance, handler404, handler500, terms_conditions, privacy_policy, handling_music_file, pricing, generate_pdf, admin_table
 from django.contrib.auth import views as auth_views
 
 # Authentication
@@ -27,6 +27,7 @@ urlpatterns = [
     path('password_change/', auth_views.PasswordChangeView.as_view(template_name='password_change_form.html'), name='password_change'),
     path('password_change/done/', auth_views.PasswordChangeDoneView.as_view(template_name='password_change_done.html'), name='password_change_done'),
     # path('user_logout/', auth_views.LogoutView.as_view(next_page='index'), name='user_logout')
+    path('log_fileupload', log_fileupload, name='log_fileupload'),
 
     # Authentication
     path('login/', CustomLoginView.as_view(), name='login'),
