@@ -48,11 +48,11 @@ STATICFILES_DIRS = [
     # Add any other directories containing static files
 ]
 
-COMPRESS_ROOT = BASE_DIR / 'myapp/static'
+# COMPRESS_ROOT = BASE_DIR / 'static'
 
-COMPRESS_ENABLED = True
+# COMPRESS_ENABLED = True
 
-STATICFILES_FINDERS = ('compressor.finders.CompressorFinder',)
+# STATICFILES_FINDERS = ('compressor.finders.CompressorFinder',)
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -162,7 +162,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
-
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = 'static/'
 
 # Default primary key field type
@@ -173,3 +173,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 IMAGE_URL = 'static/src/images/'
 
 LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
