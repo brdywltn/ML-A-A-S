@@ -46,7 +46,6 @@ def create_payment(request):
         }]
     })
 
-
     # Successfully communicated with API 
     if payment.create():
         print("Payment created successfully!")
@@ -99,7 +98,7 @@ def execute_payment(request):
         #TODO: Change this to a more appropriate error message
         print("exiting at the end of execute_payment()")
         return redirect('handler404')
-    
+       
 def payment_cancelled(request):
     return render(request, 'payment_cancelled.html')
 
