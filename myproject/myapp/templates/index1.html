@@ -19,6 +19,7 @@
         </div>
     </div>
 
+    {% if token_count > 0 %}
     <div class="gap-16 items-center py-8 px-4 mx-auto max-w-screen-xl lg:grid lg:grid-cols-2">
       <form enctype="multipart/form-data" method="post" id="uploadForm">
         {% csrf_token %}
@@ -30,6 +31,17 @@
         </button>
       </form>
     </div>
+    {% else %}
+    <div class="gap-16 items-center py-8 px-4 mx-auto max-w-screen-xl lg:grid lg:grid-cols-2">
+      <div class="font-light text-gray-500 sm:text-lg dark:text-gray-400">
+        <h2 class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">Tokens required</h2>
+        <p class="mb-4">You require more tokens to use this service</p>
+        <button class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
+          <a href="{% url 'pricing' %}">Buy Tokens</a>
+        </button>
+      </div>
+    </div>
+    {% endif %}
 
 
     <div id="player" class="py-8 px-4 mx-auto max-w-screen-xl lg:py-8 hidden">

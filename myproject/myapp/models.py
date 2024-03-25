@@ -3,6 +3,8 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User, Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from enum import Enum
+from django.dispatch import receiver
+from django.db.models.signals import post_save
 
 # class UserTypes(User):
 #     USER_TYPE_CHOICES = (
@@ -46,6 +48,24 @@ class Profile(models.Model):
     def __str__(self):
         return f'{self.user.username} Profile'
 
+
+# Model to hold the user token count
+class UserTokenCount(models.Model):
+    # User
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    # Token count
+    token_count = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f'{self.user.username}\'s token count: {self.token_count}'
+    
+# Automatically create a UserTokenCount entry for each user on user creation
+@receiver(post_save, sender=User)
+def create_or_update_user_profile(sender, instance, created, **kwargs):
+    if created:
+        UserTokenCount.objects.get_or_create(user=instance)
+        Profile.objects.get_or_create(user=instance)
+    # instance.profile.save()
 
 class Action(Enum):
     UPLOAD_FILE = "The user has successfully uploaded a file."
