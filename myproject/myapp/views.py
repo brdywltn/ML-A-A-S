@@ -199,54 +199,28 @@ def handler500(request, *args, **kwargs):
 def maintenance(request):
     return render(request, 'maintenance.html')
 
-# def user_login(request):
-#     if request.method == 'POST':
-#         form = LoginForm(request.POST)
-
-#         if form.is_valid():
-#             username = form.cleaned_data.get('username')
-#             password = form.cleaned_data.get('password')
-
-#             user = authenticate(request, username=username, password=password)  # Passing request along with username and password
-
-#             if user:
-#                 login(request, user=user)  # Passing request along with user
-#                 return redirect('users')
-#             else:
-#                 messages.error(request, 'Invalid username or password.')
-#         else:
-#             pass
-
-#     else:
-#         form = LoginForm()
-#     return render(request, 'login.html', {'form': form})
-
-
-# def register(request):
-#     if request.method == 'POST':
-#         form = CustomRegistrationForm(request.POST)
-#         if form.is_valid():
-#             form.save()
-#             return redirect('user_login')
-#     else:
-#         form = CustomRegistrationForm()
-
-#     return render(request, 'register.html', {'form': form})
-
-# def user_logout(request):
-#     logout(request)
-#     return redirect('user_login')
-
 
 # Authentication
 class RegisterView(generic.CreateView):
     form_class = UserRegisterForm
-    success_url = reverse_lazy('login')
+    success_url = reverse_lazy('index')
     template_name = 'registration/register.html'
 
     def form_valid(self, form):
         response = super().form_valid(form)
-        Profile.objects.create(user=self.object, user_type=0)  # Default user type as Basic User
+        user = self.object  # Grab the user instance
+
+        # Ensure the user is active; this line might be redundant if you're sure users are active by default
+        user.is_active = True
+        user.save()
+
+        # Check if the Profile exists, and if not, create it
+        if not Profile.objects.filter(user=user).exists():
+            Profile.objects.create(user=user, user_type=0)  # Default user type as Basic User
+
+        # Log the user in
+        login(self.request, user)
+
         return response
     
 
