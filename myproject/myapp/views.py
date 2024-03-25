@@ -153,11 +153,15 @@ def users(request):
     admin_dict = json.loads(data_admin.content)
     user_dict = json.loads(data_user.content)
     token_count = UserTokenCount.objects.get(user=request.user).token_count
+    user_profile = request.user.profile
+    user = request.user
     # Pass the data as a context variable to the template
     # !!! ADMIN DATA ONLY DISPLAYED AND GET IF USER IS ADMIN !!!
     context['admin_data'] = admin_dict['data']
     context['user_data'] = user_dict['data']
     context['token_count'] = token_count
+    context['user_profile'] = user_profile
+    context['user'] = user
 
     return render(request, 'user_page.html', context)
 
