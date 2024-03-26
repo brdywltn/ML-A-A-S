@@ -14,7 +14,8 @@ services:
       - "5432:5432"
   web:
     build: .
-    command: /bin/sh -c "/entrypoint.sh"
+    #command: /bin/sh -c "/entrypoint.sh"
+    command: ["/wait-for-it.sh", "db:5432", "--", "/bin/sh", "/entrypoint.sh"]
     volumes:
       - .:/usr/src/app
       - static_volume:/usr/src/app/static

@@ -27,6 +27,9 @@ ENV PYTHONUNBUFFERED 1
 # Set work directory
 WORKDIR /usr/src/app
 
+COPY ./wait-for-it.sh /wait-for-it.sh
+RUN chmod +x /wait-for-it.sh
+
 # Install Python dependencies
 COPY ./requirements.txt .
 RUN pip install --upgrade pip && pip install -r requirements.txt

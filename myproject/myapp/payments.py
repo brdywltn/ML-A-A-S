@@ -93,10 +93,12 @@ def execute_payment(request):
         # commit changes
         # TODO: Change something here such that the token amount added depends on a detail of the transaction,
         #       i.e. £9.99 payment for one token or £24.99 for 
-        # 
-        add_tokens(user, tokens_purchased)
-
-        return redirect('success')
+        #
+        if request.user.is_authenticated:
+            add_tokens(user, tokens_purchased)
+            return redirect('success')
+        else:
+            return redirect('handler404')
     else:
         #TODO: Change this to a more appropriate error message
         print("exiting at the end of execute_payment()")
