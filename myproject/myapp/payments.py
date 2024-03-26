@@ -8,7 +8,6 @@ from django.urls import reverse
 from .models import UserTokenCount
 
 # Create a payment that can be made via the PayPal API
-# Create a payment that can be made via the PayPal API
 def create_payment(request):
     # Configure PayPal SDK
     paypalrestsdk.configure({
