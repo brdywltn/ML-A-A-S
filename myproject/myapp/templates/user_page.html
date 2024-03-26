@@ -7,7 +7,17 @@
       User settings
     </h1>
     <h3 class="mb-4 text-xl font-semibold dark:text-white">
-      User type: {{ user_profile.user_type }}
+      {% if user_profile.user_type == 0 %}
+        User type: User
+      {% elif user_profile.user_type == 1 %}
+        User type: Admin
+      {% elif user_profile.user_type == 2 %}
+        User type: ML Engineer
+      {% elif user_profile.user_type == 3 %}
+        User type: Accountant
+      {% else %}
+        User type: Unknown
+      {% endif %}
     </h3>
   </div>
   <!-- Right Content -->
