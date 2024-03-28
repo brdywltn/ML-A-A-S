@@ -12,8 +12,8 @@ class Command(BaseCommand):
         if not Profile.objects.filter(username="admin").exists():
             Profile.objects.create_user("admin", password="placeholder")
         
-        if not Profile.objects.filter(username="base_user").exists():
-            Profile.objects.create_user("base_user", password="placeholder")
+        # if not Profile.objects.filter(username="base_user").exists():
+        #     Profile.objects.create_user("base_user", password="placeholder")
         
         if not Profile.objects.filter(username="ml_engineer").exists():
             Profile.objects.create_user("ml_engineer", password="placeholder")

@@ -86,7 +86,7 @@
       {% comment %} REPLACE WITH LOGIC TO CHECK PROPER USER {% endcomment %}
     </div>
     {% endif %}
-    {% if 1 %}
+    {% if user_profile.user_type == 2 %}
 
     <div
       class="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800"
@@ -123,7 +123,8 @@
         </button>
       </form>
     </div>
-    {% comment %} AI content {% endcomment %} {% endif%}
+    {% comment %} AI content {% endcomment %} 
+    {% endif %}
   </div>
 
   <div class="col-span-2">
@@ -172,6 +173,7 @@
         </div>
       </div>
     </div>
+    {% if user_profile.user_type == 1 or user_profile.user_type == 2 %}
     <div
       class="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800"
     >
@@ -212,9 +214,11 @@
         </tbody>
       </table>
     </div>
+
+    {% endif %}
     {% if 1 %} {% comment %} REPLACE WITH LOGIC TO CHECK PROPER USER
     {%endcomment %}
-    {% if user_profile.user_type == 2 %}
+    {% comment %} {% if user_profile.user_type == 2 %}
     <div
       class="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800"
     >
@@ -259,7 +263,7 @@
         </tbody>
       </table>
     </div>
-    {% endif %}
+    {% endif %} {% endcomment %}
     {% endif %} {% comment %} Admin page functionality end {% endcomment %}
   </div>
 </div>

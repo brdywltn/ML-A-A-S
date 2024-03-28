@@ -6,33 +6,6 @@ from enum import Enum
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 
-# class UserTypes(User):
-#     USER_TYPE_CHOICES = (
-#         0, 'Basic User',
-#         1, 'Admin',
-#         2, 'ML Engineer',
-#         3, 'Accountant'
-#     )
-
-#     usertype = models.PositiveSmallIntegerField(choices=USER_TYPE_CHOICES) # should we declare default=0 here?
-
-# group_names = ['Basic User', 'Admin', 'ML Engineer', 'Accountant']
-# for group_name in group_names:
-#     Group.objects.get_or_create(name=group_name)
-
-# # assign group permissions
-# content_type = ContentType.objects.get_for_model(UserTypes)
-# permission = Permission.objects.create(codename='can_view_user',
-#                                        name='Can View User',
-#                                        content_type=content_type)
-# group = Group.objects.get(name='Admin')
-# group.permissions.add(permission)
-
-
-# User = get_user_model()
-
-# user = User.objects.create_user('username', 'email', 'password')
-# # names are not necessary - reduces gdpr concerns aswell
 
 class Profile(models.Model):
     USER_TYPES = (
