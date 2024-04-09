@@ -175,6 +175,8 @@ IMAGE_URL = 'static/src/images/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
+SESSION_COOKIE_AGE = 300
+SESSION_SAVE_EVERY_REQUEST = True
 
 #PayPal API settings
 PAYPAL_MODE = 'sandbox'
