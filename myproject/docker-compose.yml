@@ -41,8 +41,6 @@ services:
 
   tensorflow_serving:
     image: tensorflow/serving
-    ports:
-      - "8501:8501"
     volumes:
       - ./models:/models
     environment:
