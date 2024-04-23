@@ -262,6 +262,17 @@ def generate_pdf(request):
 # Running the audio file through the model
 class InstrumentDetectionView(APIView):
     def post(self, request):
+        # Get the user's token count
+        user_token_count = UserTokenCount.objects.get(user=request.user)
+
+        # Check if the user has more than one token
+        if user_token_count.token_count < 1:
+            return Response({'error': 'Insufficient tokens'}, status=status.HTTP_403_FORBIDDEN)
+
+        # Decrease the user's token count by one
+        user_token_count.token_count -= 1
+        user_token_count.save()
+        
         serializer = InstrumentDetectionSerializer(data=request.data)
         if serializer.is_valid():
             audio_file = serializer.validated_data['audio_file']

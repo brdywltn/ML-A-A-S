@@ -1158,3 +1158,6 @@ Traceback (most recent call last):
   File "/usr/local/lib/python3.11/site-packages/django/template/base.py", line 555, in invalid_block_tag
     raise self.error(
 django.template.exceptions.TemplateSyntaxError: Invalid block tag on line 262: 'endblock', expected 'elif', 'else' or 'endif'. Did you forget to register or load this tag?
+Watching for file changes with StatReloader
+Not Found: /favicon.ico
+Watching for file changes with StatReloader
