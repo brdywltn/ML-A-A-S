@@ -66,10 +66,9 @@ def log_fileupload(request):
         data = json.loads(request.body)
         status = data.get('status')
         file = data.get('file')
-        description = data.get('description')
 
         if request.user.is_authenticated:
-            log_data = get_log_data(Action.UPLOAD_FILE, status, file, description)
+            log_data = get_log_data(Action.UPLOAD_FILE, status, file)
             create_log(request.user, log_data)
 
         return JsonResponse({'message': 'Log created successfully'}, status=201)
@@ -113,7 +112,7 @@ def user_table(request):
         log = json.loads(row[2])
         # Create a dictionary with the date, user, and JSON fields
         date = row[0].strftime('%Y-%m-%d %H:%M:%S')
-        entry = {'date': date, 'user': row[1], 'file': log['file'], 'action': log['action'], 'status': log['status']}
+        entry = {'date': date, 'user': row[1], 'file': log['file'], 'action': log['action'], 'status': log['status'], 'description': log['description']}
         data.append(entry)
 
     # Return the data as a JSON response
@@ -183,6 +182,7 @@ def users(request):
     context['token_count'] = token_count
     context['user_profile'] = user_profile
     context['user'] = user
+    print(context['user_data'])
 
     return render(request, 'user_page.html', context)
 
@@ -265,10 +265,6 @@ class InstrumentDetectionView(APIView):
         serializer = InstrumentDetectionSerializer(data=request.data)
         if serializer.is_valid():
             audio_file = serializer.validated_data['audio_file']
-            
-            # Save the uploaded file temporarily
-            # with open('temp_audio.wav', 'wb') as f:
-            #     f.write(audio_file.read())
             
             # Preprocess the audio file
             preprocessed_data = preprocess_audio_for_inference(audio_file)
