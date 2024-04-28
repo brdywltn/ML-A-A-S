@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.http import HttpResponse
 from django.utils import timezone
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.template import RequestContext
 import logging
 from reportlab.pdfgen import canvas
@@ -12,7 +12,7 @@ import json
 from datetime import datetime
 
 from .forms import InstrumentDetectionForm
-from .models import Log, Action, User, UserTokenCount
+from .models import Log, Action, User, UserTokenCount, Profile
 from django.http import JsonResponse
 from django.db import connection
 
@@ -97,10 +97,9 @@ def admin_table(request):
 
 
 def user_table(request):
-    # Execute the query and fetch all rows
-    query = """SELECT date, user, log FROM myapp_log ORDER BY date DESC"""
+    user_id= request.user.id
     # Only display user logs code below
-    # query = """SELECT date, user, log FROM myapp_log WHERE user = '{}' ORDER BY date DESC""".format(request.user)
+    query = """SELECT date, user, log FROM myapp_log WHERE user_id = {} ORDER BY date DESC""".format(user_id)
     with connection.cursor() as cursor:
         cursor.execute(query)
         rows = cursor.fetchall()
@@ -120,11 +119,11 @@ def user_table(request):
 
 def index(request):
     # Initialize default context
-    context = {'form': InstrumentDetectionForm(), 
+    context = {'form': InstrumentDetectionForm(),
                'predictions': [],
                'file_name': None
                }
-    
+
     # Handle authenticated users
     if request.user.is_authenticated:
         token_count = UserTokenCount.objects.get(user=request.user).token_count
@@ -147,7 +146,7 @@ def index(request):
             else:
                 context['form'] = form
         # For GET requests or if form is not valid, render the page with the default or updated context
-        return render(request, 'index1.html', context)        
+        return render(request, 'index1.html', context)
 
     # Handle unauthenticated users
     else:
@@ -162,10 +161,11 @@ def index(request):
         return render(request, 'index2.html')
 
 
-        
+
 
 
 def users(request):
+<<<<<<< HEAD
     # Make a request to the admin_table view to get the data
     context = {}
     data_admin = admin_table(request)
@@ -183,8 +183,32 @@ def users(request):
     context['user_profile'] = user_profile
     context['user'] = user
     print(context['user_data'])
+=======
+    if request.user.is_authenticated:
+        # Make a request to the admin_table view to get the data
+        context = {}
+        data_admin = admin_table(request)
+        data_user = user_table(request)
+        admin_dict = json.loads(data_admin.content)
+        user_dict = json.loads(data_user.content)
+        token_count = UserTokenCount.objects.get(user=request.user).token_count
+        user_profile = request.user.profile
+        user = request.user
+        all_user_profiles = Profile.objects.all()  # Retrieve all Profile objects
+>>>>>>> 74b89e6 (Admin/superuser table to manage users/ app is not crushing when non user tries to access dashboard)
 
-    return render(request, 'user_page.html', context)
+        # Pass the data as a context variable to the template
+        # !!! ADMIN DATA ONLY DISPLAYED AND GET IF USER IS ADMIN !!!
+        context['admin_data'] = admin_dict['data']
+        context['user_data'] = user_dict['data']
+        context['token_count'] = token_count
+        context['user_profile'] = user_profile
+        context['user'] = user
+        context['all_user_profiles'] = all_user_profiles  # Add all_user_profiles to the context
+
+        return render(request, 'user_page.html', context)
+    return redirect(   'login'
+)
 
 def handler404(request, *args, **kwargs):
     response = render(request, '404.html', {})
@@ -222,7 +246,7 @@ class RegisterView(generic.CreateView):
         login(self.request, user)
 
         return response
-    
+
 
 class CustomLoginView(LoginView):
     authentication_form = LoginAuthenticationForm
@@ -272,22 +296,30 @@ class InstrumentDetectionView(APIView):
         # Decrease the user's token count by one
         user_token_count.token_count -= 1
         user_token_count.save()
-        
+
         serializer = InstrumentDetectionSerializer(data=request.data)
         if serializer.is_valid():
             audio_file = serializer.validated_data['audio_file']
+<<<<<<< HEAD
             
+=======
+
+            # Save the uploaded file temporarily
+            # with open('temp_audio.wav', 'wb') as f:
+            #     f.write(audio_file.read())
+
+>>>>>>> 74b89e6 (Admin/superuser table to manage users/ app is not crushing when non user tries to access dashboard)
             # Preprocess the audio file
             preprocessed_data = preprocess_audio_for_inference(audio_file)
-            
+
             # Prepare data for TensorFlow Serving
             data = json.dumps({"signature_name": "serving_default", "instances": [window.tolist() for window in preprocessed_data]})
-            
+
             # Send request to TensorFlow Serving
             url = 'http://tensorflow_serving:8501/v1/models/instrument_model/versions/2:predict'
             headers = {"Content-Type": "application/json"}
             response = requests.post(url, data=data, headers=headers)
-            
+
             # Process the response
             if response.status_code == 200:
                 raw_predictions = response.json()['predictions']
@@ -296,10 +328,10 @@ class InstrumentDetectionView(APIView):
                 return Response({"predictions": formatted_predictions}, status=status.HTTP_200_OK)
             else:
                 return Response({"error": "Failed to get predictions"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-    
+
+
     def format_predictions(self, predictions):
         instruments = ['Guitar', 'Drum', 'Violin', 'Piano']
         formatted_predictions = []
@@ -308,7 +340,13 @@ class InstrumentDetectionView(APIView):
             formatted_scores = "<br>".join([f"{instruments[i]} - {score:.2f}" for i, score in enumerate(prediction)])
             formatted_predictions.append(f"{formatted_window}{formatted_scores}")
         return formatted_predictions
-
+def change_user_type(request, user_id):
+    if request.method == 'POST':
+        user_type = request.POST.get('user_type')
+        user_profile = get_object_or_404(Profile, user__id=user_id)  # Get the user profile
+        user_profile.user_type = user_type
+        user_profile.save()
+        return redirect('users')  # Redirect to the users page
 
 def user_has_credits():
     has_credits = False

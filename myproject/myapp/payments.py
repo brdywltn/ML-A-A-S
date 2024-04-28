@@ -6,7 +6,7 @@ from django.urls import reverse
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from .models import UserTokenCount
-
+from .views import get_log_data, create_log
 # Create a payment that can be made via the PayPal API
 # Create a payment that can be made via the PayPal API
 def create_payment(request):
@@ -14,7 +14,7 @@ def create_payment(request):
     paypalrestsdk.configure({
         "mode": settings.PAYPAL_MODE,
         "client_id": settings.PAYPAL_CLIENT_ID,
-        "client_secret": settings.PAYPAL_CLIENT_SECRET  
+        "client_secret": settings.PAYPAL_CLIENT_SECRET
     })
 
     # Create payment object
@@ -45,7 +45,7 @@ def create_payment(request):
         }]
     })
 
-    # Successfully communicated with API 
+    # Successfully communicated with API
     if payment.create():
         print("Payment created successfully!")
         # get url for payment approval
@@ -70,7 +70,7 @@ def execute_payment(request):
         print("no payment")
         #TODO: Change this to a more appropriate path, maybe a generic error page that takes a string:Error to display in a template
         return redirect('handler404')
-    
+
     # configure API
     paypalrestsdk.configure({
         "mode": settings.PAYPAL_MODE,
@@ -88,11 +88,11 @@ def execute_payment(request):
         # Allocate some tokens
         user = request.user
         tokens_purchased = 1
-        
+
         # increment user_tokens
         # commit changes
         # TODO: Change something here such that the token amount added depends on a detail of the transaction,
-        #       i.e. £9.99 payment for one token or £24.99 for 
+        #       i.e. £9.99 payment for one token or £24.99 for
         #
         if request.user.is_authenticated:
             add_tokens(user, tokens_purchased)
@@ -114,4 +114,6 @@ def payment_cancelled(request):
     return render(request, 'payment_cancelled.html')
 
 def payment_success(request):
+    log_data = get_log_data(Action.PAYMENT_SUCCESSFUL, 'success', user=request.user.username)
+    create_log(log_data)
     return render(request,'payment_success.html')
