@@ -2333,3 +2333,228 @@ Watching for file changes with StatReloader
 Watching for file changes with StatReloader
 /usr/src/app/myproject/settings.py changed, reloading.
 Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Internal Server Error: /model_performance/
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/usr/local/lib/python3.11/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/usr/local/lib/python3.11/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/src/app/myapp/views.py", line 326, in get
+    if request.user.user_type != 0:
+       ^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/django/utils/functional.py", line 253, in inner
+    return func(_wrapped, *args)
+           ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'User' object has no attribute 'user_type'
+Internal Server Error: /model_performance/
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/usr/local/lib/python3.11/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/usr/local/lib/python3.11/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/src/app/myapp/views.py", line 326, in get
+    if request.user.user_type != 0:
+       ^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/django/utils/functional.py", line 253, in inner
+    return func(_wrapped, *args)
+           ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'User' object has no attribute 'user_type'
+/usr/src/app/myapp/models.py changed, reloading.
+Watching for file changes with StatReloader
+/usr/src/app/myapp/views.py changed, reloading.
+Watching for file changes with StatReloader
+Not Found: /model_performance/
+/usr/src/app/myapp/views.py changed, reloading.
+Watching for file changes with StatReloader
+Not Found: /model_performance/
+Watching for file changes with StatReloader
+Not Found: /model_performance/
+Not Found: /model_performan
+Not Found: /model_performance/
+Watching for file changes with StatReloader
+Not Found: /model_performance/
+Not Found: /model_performance/
+/usr/src/app/myapp/views.py changed, reloading.
+Watching for file changes with StatReloader
+Not Found: /model_performance/
+/usr/src/app/myapp/views.py changed, reloading.
+Watching for file changes with StatReloader
+/usr/src/app/myapp/views.py changed, reloading.
+Watching for file changes with StatReloader
+Not Found: /model_performance/
+/usr/src/app/myapp/views.py changed, reloading.
+Watching for file changes with StatReloader
+Not Found: /model_performance/
+Request[POST]: https://api.sandbox.paypal.com/v1/oauth2/token
+Response[200]: OK, Duration: 0.494332s.
+PayPal-Request-Id: e390a7ec-e4d5-469d-ac32-a7ed08f347ad
+Request[POST]: https://api.sandbox.paypal.com/v1/payments/payment
+Response[201]: Created, Duration: 1.121100s.
+Request[POST]: https://api.sandbox.paypal.com/v1/oauth2/token
+Response[200]: OK, Duration: 0.638618s.
+Request[GET]: https://api.sandbox.paypal.com/v1/payments/payment/PAYID-MYXIHOA1Y946802D6847292A
+Response[200]: OK, Duration: 0.332956s.
+PayPal-Request-Id: a37bbb23-b0bc-41e7-b52c-9ffe709dab87
+Request[POST]: https://api.sandbox.paypal.com/v1/payments/payment/PAYID-MYXIHOA1Y946802D6847292A/execute
+Response[200]: OK, Duration: 1.20697s.
+Internal Server Error: /payment_success/
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/src/app/myapp/payments.py", line 117, in payment_success
+    log_data = get_log_data(Action.PAYMENT_SUCCESSFUL, 'success', user=request.user.username)
+                            ^^^^^^
+NameError: name 'Action' is not defined
+/usr/src/app/myapp/models.py changed, reloading.
+Watching for file changes with StatReloader
+/usr/src/app/myapp/models.py changed, reloading.
+Watching for file changes with StatReloader
+Not Found: /model_performance/
+/usr/src/app/myapp/views.py changed, reloading.
+Watching for file changes with StatReloader
+Internal Server Error: /model_performance/
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/django/core/handlers/base.py", line 220, in _get_response
+    response = response.render()
+               ^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/django/template/response.py", line 114, in render
+    self.content = self.rendered_content
+                   ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/django/template/response.py", line 90, in rendered_content
+    template = self.resolve_template(self.template_name)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/django/template/response.py", line 72, in resolve_template
+    return select_template(template, using=self.using)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/django/template/loader.py", line 47, in select_template
+    raise TemplateDoesNotExist(", ".join(template_name_list), chain=chain)
+django.template.exceptions.TemplateDoesNotExist: model_performance.html
+/usr/src/app/myapp/views.py changed, reloading.
+Watching for file changes with StatReloader
+/usr/src/app/myapp/views.py changed, reloading.
+Watching for file changes with StatReloader
+/usr/src/app/myapp/views.py changed, reloading.
+Watching for file changes with StatReloader
+Request[POST]: https://api.sandbox.paypal.com/v1/oauth2/token
+Response[200]: OK, Duration: 0.554958s.
+PayPal-Request-Id: 3c73cad9-5766-44f2-8ee7-57c3698da0f6
+Request[POST]: https://api.sandbox.paypal.com/v1/payments/payment
+Response[201]: Created, Duration: 1.42957s.
+Request[POST]: https://api.sandbox.paypal.com/v1/oauth2/token
+Response[200]: OK, Duration: 0.283287s.
+Request[GET]: https://api.sandbox.paypal.com/v1/payments/payment/PAYID-MYXI6GA67R166720J095691C
+Response[200]: OK, Duration: 0.784875s.
+PayPal-Request-Id: 6946ac5c-726c-41fe-adad-d0c12b35cccf
+Request[POST]: https://api.sandbox.paypal.com/v1/payments/payment/PAYID-MYXI6GA67R166720J095691C/execute
+Response[200]: OK, Duration: 1.276130s.
+Internal Server Error: /payment_success/
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/src/app/myapp/payments.py", line 117, in payment_success
+    log_data = get_log_data(Action.PAYMENT_SUCCESSFUL, 'success', user=request.user.username)
+                            ^^^^^^
+NameError: name 'Action' is not defined
+/usr/src/app/myapp/payments.py changed, reloading.
+Watching for file changes with StatReloader
+Internal Server Error: /payment_success/
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/src/app/myapp/payments.py", line 117, in payment_success
+    log_data = get_log_data(Action.PAYMENT_SUCCESSFUL, 'success', user=request.user.username)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: get_log_data() got an unexpected keyword argument 'user'
+/usr/src/app/myapp/payments.py changed, reloading.
+Watching for file changes with StatReloader
+Internal Server Error: /payment_success/
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/src/app/myapp/payments.py", line 118, in payment_success
+    create_log(log_data)
+TypeError: create_log() missing 1 required positional argument: 'log_data'
+/usr/src/app/myapp/payments.py changed, reloading.
+Watching for file changes with StatReloader
+Internal Server Error: /payment_success/
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/src/app/myapp/payments.py", line 118, in payment_success
+    create_log(log_data)
+TypeError: create_log() missing 1 required positional argument: 'log_data'
+Internal Server Error: /payment_success/
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/src/app/myapp/payments.py", line 118, in payment_success
+    create_log(log_data)
+TypeError: create_log() missing 1 required positional argument: 'log_data'
+/usr/src/app/myapp/payments.py changed, reloading.
+Watching for file changes with StatReloader
+/usr/src/app/myapp/payments.py changed, reloading.
+Watching for file changes with StatReloader

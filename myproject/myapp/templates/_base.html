@@ -9,6 +9,13 @@
     {% compress css %}
     <link rel="stylesheet" href="{% static 'src/output.css' %}" />
     {% endcompress %}
+    <style>
+      /* Ensure the modal body takes up all available space minus a margin, allowing for scrolling */
+      .modal-body {
+        max-height: calc(100vh - 4rem); /* Adjust the 4rem to increase/decrease the top and bottom margin */
+        overflow-y: auto; /* Enable vertical scrolling */
+      }
+    </style>
   </head>
 
   <body>
