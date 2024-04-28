@@ -6,34 +6,6 @@ from enum import Enum
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 
-# class UserTypes(User):
-#     USER_TYPE_CHOICES = (
-#         0, 'Basic User',
-#         1, 'Admin',
-#         2, 'ML Engineer',
-#         3, 'Accountant'
-#     )
-
-#     usertype = models.PositiveSmallIntegerField(choices=USER_TYPE_CHOICES) # should we declare default=0 here?
-
-# group_names = ['Basic User', 'Admin', 'ML Engineer', 'Accountant']
-# for group_name in group_names:
-#     Group.objects.get_or_create(name=group_name)
-
-# # assign group permissions
-# content_type = ContentType.objects.get_for_model(UserTypes)
-# permission = Permission.objects.create(codename='can_view_user',
-#                                        name='Can View User',
-#                                        content_type=content_type)
-# group = Group.objects.get(name='Admin')
-# group.permissions.add(permission)
-
-
-# User = get_user_model()
-
-# user = User.objects.create_user('username', 'email', 'password')
-# # names are not necessary - reduces gdpr concerns aswell
-
 class Profile(models.Model):
     USER_TYPES = (
         (0, 'Basic User'),
@@ -61,18 +33,18 @@ class UserTokenCount(models.Model):
 
 
 class Action(Enum):
-    UPLOAD_FILE = "The user has successfully uploaded a file."
-    LOGIN = "The user has logged in to their account."
-    REGISTER = "The user has registered for a new account."
-    PAYMENT_SUCCESSFUL = "The user has successfully made a payment."
-    GENERATE_FINANCIAL_STATEMENT = "The user has generated a financial statement."
-    CHANGE_MLA = "The user has changed their maximum loss amount (MLA)."
-    RUN_ALGORITHM = "The user has run an algorithm."
-    INVALID_FILE = "The uploaded file is invalid and cannot be processed."
-    INVALID_PASSWORD = "The user has entered an invalid password."
-    USER_DOES_NOT_EXIST = "The user does not exist in the system."
-    DOWNLOAD_BREAKDOWN = "The user has downloaded a breakdown of their data."
-    UNKNOWN = "An unknown error has occurred."
+    UPLOAD_FILE = "{username} has successfully uploaded a file."
+    LOGIN = "{username} has logged in to their account."
+    REGISTER = "{username} has registered for a new account."
+    PAYMENT_SUCCESSFUL = "{username} has successfully made a payment."
+    GENERATE_FINANCIAL_STATEMENT = "{username} has generated a financial statement."
+    CHANGE_MLA = "{username} has changed their maximum loss amount (MLA)."
+    RUN_ALGORITHM = "{username} has run an algorithm."
+    INVALID_FILE = "{username} uploaded an invalid file that cannot be processed."
+    INVALID_PASSWORD = "{username} has entered an invalid password."
+    USER_DOES_NOT_EXIST = "The user {username} does not exist in the system."
+    DOWNLOAD_BREAKDOWN = "{username} has downloaded a breakdown of their data."
+    UNKNOWN = "An unknown error has occurred for user {username}."
 
 # class Logs(models.Model):
 #     """

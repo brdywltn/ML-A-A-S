@@ -7,9 +7,9 @@
   {% if metrics %}
     <div class="bg-white shadow-md rounded p-6">
       <p><strong>Request Count:</strong> {{ metrics.request_count }}</p>
-      <p><strong>Average Request Latency:</strong> {{ metrics.avg_request_latency|floatformat:2 }} ms</p>
-      <p><strong>Average Runtime Latency:</strong> {{ metrics.avg_runtime_latency|floatformat:2 }} ms</p>
-      <p><strong>Model Load Latency:</strong> {{ metrics.model_load_latency }} μs</p>
+      <p><strong>Average Request Latency:</strong> {{ metrics.avg_request_latency|floatformat:6 }} seconds</p>
+      <p><strong>Average Runtime Latency:</strong> {{ metrics.avg_runtime_latency|floatformat:6 }} seconds</p>
+      <p><strong>Model Load Latency:</strong> {{ metrics.model_load_latency|floatformat:6 }} seconds</p>
     </div>
   {% else %}
     <p>Failed to retrieve model performance metrics.</p>

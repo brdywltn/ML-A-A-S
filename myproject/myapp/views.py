@@ -38,9 +38,10 @@ import re
 
 logger = logging.getLogger(__name__)
 
-def get_log_data(action, status='success', file=None, description=None):
+def get_log_data(user, action, status='success', file=None, description=None):
     log_data = {
-        'action': action.value,
+        'username': user.username,
+        'action': action.value.format(username=user.username),
         'status': status,
         'file': file,
         'description': description,
@@ -57,10 +58,10 @@ def handling_music_file(request):
                 'action': 'File uploaded',
                 'file': request.FILES['audio_file'].name,
             }
-            log_data = get_log_data(Action.UPLOAD_FILE, 'success', file=request.FILES['audio_file'].name)
+            log_data = get_log_data(request.user ,Action.UPLOAD_FILE, 'success', file=request.FILES['audio_file'].name)
             create_log(request.user if request.user.is_authenticated else None, log_data)
             return HttpResponse('File uploaded successfully!',log_data)
-    log_data = get_log_data(Action.invalid_file, 'error')
+    log_data = get_log_data(request.user ,Action.INVALID_FILE, 'error')
     create_log(None, log_data)
     return HttpResponse('File invalid',log_data)
 
@@ -73,7 +74,7 @@ def log_fileupload(request):
         description = data.get('description')
 
         if request.user.is_authenticated:
-            log_data = get_log_data(Action.UPLOAD_FILE, status, file, description)
+            log_data = get_log_data(request.user, Action.UPLOAD_FILE, status, file, description)
             create_log(request.user, log_data)
 
         return JsonResponse({'message': 'Log created successfully'}, status=201)
@@ -82,19 +83,23 @@ def log_fileupload(request):
 
 def admin_table(request):
     # Execute the query and fetch all rows
-    query = """SELECT date, user, log FROM myapp_log ORDER BY date DESC"""
+    query = """SELECT date, log, user_id FROM myapp_log ORDER BY date DESC"""
     with connection.cursor() as cursor:
         cursor.execute(query)
         rows = cursor.fetchall()
-
+    print(rows)
     # Create a list of dictionaries from the query results
     data = []
     for row in rows:
         # Parse the JSON string into a dictionary
-        log = json.loads(row[2])
+        log = json.loads(row[1])
+
+        # Get the user object based on the user_id
+        user_id = row[2]
+
         # Create a dictionary with the date, user, and JSON fields
         date = row[0].strftime('%Y-%m-%d %H:%M:%S')
-        entry = {'date': date, 'user': row[1], 'file': log['file'], 'action': log['action'], 'status': log['status']}
+        entry = {'date': date, 'user': user_id, 'file': log['file'], 'action': log['action'], 'status': log['status']}
         data.append(entry)
 
     # Return the data as a JSON response
@@ -104,7 +109,7 @@ def admin_table(request):
 def user_table(request):
     user_id= request.user.id
     # Only display user logs code below
-    query = """SELECT date, user, log FROM myapp_log WHERE user_id = {} ORDER BY date DESC""".format(user_id)
+    query = """SELECT date, log, user_id FROM myapp_log WHERE user_id = {} ORDER BY date DESC""".format(user_id)
     with connection.cursor() as cursor:
         cursor.execute(query)
         rows = cursor.fetchall()
@@ -113,10 +118,14 @@ def user_table(request):
     data = []
     for row in rows:
         # Parse the JSON string into a dictionary
-        log = json.loads(row[2])
+        log = json.loads(row[1])
+
+        # Get the user object based on the user_id
+        user_id = row[2]
+
         # Create a dictionary with the date, user, and JSON fields
         date = row[0].strftime('%Y-%m-%d %H:%M:%S')
-        entry = {'date': date, 'user': row[1], 'file': log['file'], 'action': log['action'], 'status': log['status']}
+        entry = {'date': date, 'user': user_id, 'file': log['file'], 'action': log['action'], 'status': log['status']}
         data.append(entry)
 
     # Return the data as a JSON response
@@ -145,7 +154,7 @@ def index(request):
                 if response and hasattr(response, 'data') and 'predictions' in response.data:
                     context['predictions'] = response.data['predictions']
                     if request.user.is_authenticated:
-                        log_data = get_log_data(Action.RUN_ALGORITHM, 'success', file=uploaded_file.name,\
+                        log_data = get_log_data(request.user, Action.RUN_ALGORITHM, 'success', file=uploaded_file.name,\
                                                 description=response.data["predictions"])
                         create_log(request.user, log_data)
             else:
@@ -192,8 +201,7 @@ def users(request):
         context['all_user_profiles'] = all_user_profiles  # Add all_user_profiles to the context
 
         return render(request, 'user_page.html', context)
-    return redirect(   'login'
-)
+    return redirect('login')
 
 def handler404(request, *args, **kwargs):
     response = render(request, '404.html', {})
@@ -241,7 +249,7 @@ class CustomLoginView(LoginView):
         # Create log if user is authenticated
         login(self.request, form.get_user())
 
-        log_data = get_log_data(Action.LOGIN, 'success')
+        log_data = get_log_data(form.get_user(), Action.LOGIN, 'success')
         create_log(form.get_user(), log_data)
 
         return super().form_valid(form)
@@ -324,6 +332,7 @@ class InstrumentDetectionView(APIView):
     
 
 
+
 class ModelPerformanceView(UserPassesTestMixin, TemplateView):
     template_name = 'model_performance.html'
 
@@ -347,15 +356,16 @@ class ModelPerformanceView(UserPassesTestMixin, TemplateView):
             runtime_latency_count = re.search(r':tensorflow:serving:runtime_latency_count{model_name="instrument_model",API="Predict",runtime="TF1"} (\d+)', metrics_data)
             model_load_latency = re.search(r':tensorflow:cc:saved_model:load_latency{model_path="/models/instrument_model/2"} (\d+)', metrics_data)
 
-            # Calculate average latencies
-            avg_request_latency = float(request_latency_sum.group(1)) / float(request_latency_count.group(1)) if request_latency_sum and request_latency_count else None
-            avg_runtime_latency = float(runtime_latency_sum.group(1)) / float(runtime_latency_count.group(1)) if runtime_latency_sum and runtime_latency_count else None
+            # Calculate average latencies in seconds
+            avg_request_latency = float(request_latency_sum.group(1)) / float(request_latency_count.group(1)) / 1e6 if request_latency_sum and request_latency_count else None
+            avg_runtime_latency = float(runtime_latency_sum.group(1)) / float(runtime_latency_count.group(1)) / 1e6 if runtime_latency_sum and runtime_latency_count else None
+            model_load_latency_seconds = float(model_load_latency.group(1)) / 1e6 if model_load_latency else None
 
             context['metrics'] = {
                 'request_count': request_count.group(1) if request_count else None,
                 'avg_request_latency': avg_request_latency,
                 'avg_runtime_latency': avg_runtime_latency,
-                'model_load_latency': model_load_latency.group(1) if model_load_latency else None
+                'model_load_latency': model_load_latency_seconds
             }
         else:
             context['metrics'] = None

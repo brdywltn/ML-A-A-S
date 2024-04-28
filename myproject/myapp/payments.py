@@ -114,6 +114,6 @@ def payment_cancelled(request):
     return render(request, 'payment_cancelled.html')
 
 def payment_success(request):
-    log_data = get_log_data(Action.PAYMENT_SUCCESSFUL, 'success')
+    log_data = get_log_data(request.user, Action.PAYMENT_SUCCESSFUL, 'success')
     create_log(request.user, log_data)
     return render(request,'payment_success.html')
