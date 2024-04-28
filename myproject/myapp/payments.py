@@ -5,7 +5,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from .models import UserTokenCount
+from .models import Action, UserTokenCount
 from .views import get_log_data, create_log
 # Create a payment that can be made via the PayPal API
 # Create a payment that can be made via the PayPal API
@@ -114,6 +114,6 @@ def payment_cancelled(request):
     return render(request, 'payment_cancelled.html')
 
 def payment_success(request):
-    log_data = get_log_data(Action.PAYMENT_SUCCESSFUL, 'success', user=request.user.username)
-    create_log(log_data)
+    log_data = get_log_data(Action.PAYMENT_SUCCESSFUL, 'success')
+    create_log(request.user, log_data)
     return render(request,'payment_success.html')

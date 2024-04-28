@@ -31,6 +31,10 @@ from .models import Profile
 from .forms import UserRegisterForm, LoginAuthenticationForm
 from django.contrib.auth.views import LoginView
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.mixins import UserPassesTestMixin
+from django.views.generic import TemplateView
+
+import re
 
 logger = logging.getLogger(__name__)
 
@@ -340,6 +344,46 @@ class InstrumentDetectionView(APIView):
             formatted_scores = "<br>".join([f"{instruments[i]} - {score:.2f}" for i, score in enumerate(prediction)])
             formatted_predictions.append(f"{formatted_window}{formatted_scores}")
         return formatted_predictions
+    
+
+class ModelPerformanceView(UserPassesTestMixin, TemplateView):
+    template_name = 'model_performance.html'
+
+    def test_func(self):
+        return self.request.user.is_authenticated and (self.request.user.is_superuser or self.request.user.profile.user_type == 2)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        metrics_url = 'http://tensorflow_serving:8501/monitoring/prometheus/metrics'
+        response = requests.get(metrics_url)
+
+        if response.status_code == 200:
+            metrics_data = response.text
+
+            # Extract metrics using regular expressions
+            request_count = re.search(r':tensorflow:serving:request_count{model_name="instrument_model",status="OK"} (\d+)', metrics_data)
+            request_latency_sum = re.search(r':tensorflow:serving:request_latency_sum{model_name="instrument_model",API="predict",entrypoint="REST"} ([\d\.e\+]+)', metrics_data)
+            request_latency_count = re.search(r':tensorflow:serving:request_latency_count{model_name="instrument_model",API="predict",entrypoint="REST"} (\d+)', metrics_data)
+            runtime_latency_sum = re.search(r':tensorflow:serving:runtime_latency_sum{model_name="instrument_model",API="Predict",runtime="TF1"} ([\d\.e\+]+)', metrics_data)
+            runtime_latency_count = re.search(r':tensorflow:serving:runtime_latency_count{model_name="instrument_model",API="Predict",runtime="TF1"} (\d+)', metrics_data)
+            model_load_latency = re.search(r':tensorflow:cc:saved_model:load_latency{model_path="/models/instrument_model/2"} (\d+)', metrics_data)
+
+            # Calculate average latencies
+            avg_request_latency = float(request_latency_sum.group(1)) / float(request_latency_count.group(1)) if request_latency_sum and request_latency_count else None
+            avg_runtime_latency = float(runtime_latency_sum.group(1)) / float(runtime_latency_count.group(1)) if runtime_latency_sum and runtime_latency_count else None
+
+            context['metrics'] = {
+                'request_count': request_count.group(1) if request_count else None,
+                'avg_request_latency': avg_request_latency,
+                'avg_runtime_latency': avg_runtime_latency,
+                'model_load_latency': model_load_latency.group(1) if model_load_latency else None
+            }
+        else:
+            context['metrics'] = None
+
+        return context
+
 def change_user_type(request, user_id):
     if request.method == 'POST':
         user_type = request.POST.get('user_type')

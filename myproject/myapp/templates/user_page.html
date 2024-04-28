@@ -127,8 +127,13 @@
     </div>
     {% comment %} AI content {% endcomment %} {% endif%}
   </div>
-
   <div class="col-span-2">
+    {% if user_profile.user_type == 2 or user.is_superuser %}
+  <div class="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
+    <h3 class="mb-4 text-xl font-semibold dark:text-white">Model Performance</h3>
+    <a href="{% url 'model_performance' %}" class="text-blue-500 hover:underline">View Model Performance</a>
+  </div>
+  {% endif %}
     <div
       class="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800"
     >
