@@ -31,9 +31,9 @@ from .models import Profile
 from .forms import UserRegisterForm, LoginAuthenticationForm
 from django.contrib.auth.views import LoginView
 from django.views.decorators.csrf import csrf_exempt
+
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.views.generic import TemplateView
-
 import re
 
 logger = logging.getLogger(__name__)
@@ -70,9 +70,10 @@ def log_fileupload(request):
         data = json.loads(request.body)
         status = data.get('status')
         file = data.get('file')
+        description = data.get('description')
 
         if request.user.is_authenticated:
-            log_data = get_log_data(Action.UPLOAD_FILE, status, file)
+            log_data = get_log_data(Action.UPLOAD_FILE, status, file, description)
             create_log(request.user, log_data)
 
         return JsonResponse({'message': 'Log created successfully'}, status=201)
@@ -115,7 +116,7 @@ def user_table(request):
         log = json.loads(row[2])
         # Create a dictionary with the date, user, and JSON fields
         date = row[0].strftime('%Y-%m-%d %H:%M:%S')
-        entry = {'date': date, 'user': row[1], 'file': log['file'], 'action': log['action'], 'status': log['status'], 'description': log['description']}
+        entry = {'date': date, 'user': row[1], 'file': log['file'], 'action': log['action'], 'status': log['status']}
         data.append(entry)
 
     # Return the data as a JSON response
@@ -169,25 +170,6 @@ def index(request):
 
 
 def users(request):
-<<<<<<< HEAD
-    # Make a request to the admin_table view to get the data
-    context = {}
-    data_admin = admin_table(request)
-    data_user = user_table(request)
-    admin_dict = json.loads(data_admin.content)
-    user_dict = json.loads(data_user.content)
-    token_count = UserTokenCount.objects.get(user=request.user).token_count
-    user_profile = request.user.profile
-    user = request.user
-    # Pass the data as a context variable to the template
-    # !!! ADMIN DATA ONLY DISPLAYED AND GET IF USER IS ADMIN !!!
-    context['admin_data'] = admin_dict['data']
-    context['user_data'] = user_dict['data']
-    context['token_count'] = token_count
-    context['user_profile'] = user_profile
-    context['user'] = user
-    print(context['user_data'])
-=======
     if request.user.is_authenticated:
         # Make a request to the admin_table view to get the data
         context = {}
@@ -199,7 +181,6 @@ def users(request):
         user_profile = request.user.profile
         user = request.user
         all_user_profiles = Profile.objects.all()  # Retrieve all Profile objects
->>>>>>> 74b89e6 (Admin/superuser table to manage users/ app is not crushing when non user tries to access dashboard)
 
         # Pass the data as a context variable to the template
         # !!! ADMIN DATA ONLY DISPLAYED AND GET IF USER IS ADMIN !!!
@@ -304,15 +285,11 @@ class InstrumentDetectionView(APIView):
         serializer = InstrumentDetectionSerializer(data=request.data)
         if serializer.is_valid():
             audio_file = serializer.validated_data['audio_file']
-<<<<<<< HEAD
-            
-=======
 
             # Save the uploaded file temporarily
             # with open('temp_audio.wav', 'wb') as f:
             #     f.write(audio_file.read())
 
->>>>>>> 74b89e6 (Admin/superuser table to manage users/ app is not crushing when non user tries to access dashboard)
             # Preprocess the audio file
             preprocessed_data = preprocess_audio_for_inference(audio_file)
 
@@ -345,6 +322,7 @@ class InstrumentDetectionView(APIView):
             formatted_predictions.append(f"{formatted_window}{formatted_scores}")
         return formatted_predictions
     
+
 
 class ModelPerformanceView(UserPassesTestMixin, TemplateView):
     template_name = 'model_performance.html'
