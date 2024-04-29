@@ -1,3 +1,4 @@
+# models.py
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User, Group, Permission
@@ -40,6 +41,7 @@ class Action(Enum):
     GENERATE_FINANCIAL_STATEMENT = "{username} has generated a financial statement."
     CHANGE_MLA = "{username} has changed their maximum loss amount (MLA)."
     RUN_ALGORITHM = "{username} has run an algorithm."
+    FEEDBACK_SUBMITTED = "{username} has submitted feedback."
     INVALID_FILE = "{username} uploaded an invalid file that cannot be processed."
     INVALID_PASSWORD = "{username} has entered an invalid password."
     USER_DOES_NOT_EXIST = "The user {username} does not exist in the system."
@@ -53,3 +55,5 @@ class Log(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     log = models.JSONField()
+    feedback = models.BooleanField(null=True)
+
