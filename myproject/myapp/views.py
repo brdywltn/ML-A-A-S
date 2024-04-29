@@ -71,10 +71,9 @@ def log_fileupload(request):
         data = json.loads(request.body)
         status = data.get('status')
         file = data.get('file')
-        description = data.get('description')
 
         if request.user.is_authenticated:
-            log_data = get_log_data(request.user, Action.UPLOAD_FILE, status, file, description)
+            log_data = get_log_data(request.user, Action.UPLOAD_FILE, status, file)
             create_log(request.user, log_data)
 
         return JsonResponse({'message': 'Log created successfully'}, status=201)
@@ -87,7 +86,6 @@ def admin_table(request):
     with connection.cursor() as cursor:
         cursor.execute(query)
         rows = cursor.fetchall()
-    print(rows)
     # Create a list of dictionaries from the query results
     data = []
     for row in rows:
@@ -99,7 +97,8 @@ def admin_table(request):
 
         # Create a dictionary with the date, user, and JSON fields
         date = row[0].strftime('%Y-%m-%d %H:%M:%S')
-        entry = {'date': date, 'user': user_id, 'file': log['file'], 'action': log['action'], 'status': log['status']}
+        entry = {'date': date, 'user': user_id, 'file': log['file'], 'action': log['action'], 'status': log['status'],
+                 'description': log['description']}
         data.append(entry)
 
     # Return the data as a JSON response
@@ -125,7 +124,8 @@ def user_table(request):
 
         # Create a dictionary with the date, user, and JSON fields
         date = row[0].strftime('%Y-%m-%d %H:%M:%S')
-        entry = {'date': date, 'user': user_id, 'file': log['file'], 'action': log['action'], 'status': log['status']}
+        entry = {'date': date, 'user': user_id, 'file': log['file'], 'action': log['action'], 'status': log['status'],
+                 'description': log['description']}
         data.append(entry)
 
     # Return the data as a JSON response
@@ -323,11 +323,19 @@ class InstrumentDetectionView(APIView):
 
     def format_predictions(self, predictions):
         instruments = ['Guitar', 'Drum', 'Violin', 'Piano']
-        formatted_predictions = []
+        instrument_windows = {instrument: [] for instrument in instruments}
+
         for window_index, prediction in enumerate(predictions, start=1):
-            formatted_window = f"<strong>Window {window_index}</strong><br>"
-            formatted_scores = "<br>".join([f"{instruments[i]} - {score:.2f}" for i, score in enumerate(prediction)])
-            formatted_predictions.append(f"{formatted_window}{formatted_scores}")
+            highest_score_index = prediction.index(max(prediction))
+            highest_score_instrument = instruments[highest_score_index]
+            instrument_windows[highest_score_instrument].append(window_index)
+
+        formatted_predictions = []
+        for instrument, windows in instrument_windows.items():
+            if windows:
+                window_list = ', '.join(map(str, windows))
+                formatted_predictions.append(f"{instrument} - Windows: {window_list}")
+
         return formatted_predictions
     
 

@@ -46,39 +46,6 @@ class Action(Enum):
     DOWNLOAD_BREAKDOWN = "{username} has downloaded a breakdown of their data."
     UNKNOWN = "An unknown error has occurred for user {username}."
 
-# class Logs(models.Model):
-#     """
-#     *   Logs model
-#     """
-#     user_id = models.ForeignKey("User", on_delete=models.CASCADE)
-#     error_id = models.IntegerField()
-#     date = models.DateTimeField()
-
-# class Feedback(models.Model):
-#     """
-#     *   Feedback Model
-#     """
-#     user_id = models.ForeignKey("User", on_delete=models.CASCADE)
-#     content = models.CharField(max_length=2000)
-#     date = models.DateTimeField()
-
-# class Bills(models.Model):
-#     """
-#     *   Bill/receipts Model
-#     """
-#     user_id = models.ForeignKey("User", on_delete=models.CASCADE)
-#     date = models.DateTimeField()
-#     paid = models.BooleanField(default=False)
-
-
-# class Files(models.Model):
-#     """
-#     *   Uploaded files
-#     """
-#     date = models.DateTimeField()
-#     data = models.CharField(max_length=2000)
-#     uploader = models.ForeignKey("User", on_delete=models.CASCADE)
-
 class Audio(models.Model):
     file = models.FileField('audio', upload_to='audio')
 
@@ -86,17 +53,3 @@ class Log(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     log = models.JSONField()
-
-
-# # LOGIN
-# log_data = get_log_data(Action.LOGIN, 'success', user=request.user.username)
-# create_log(log_data)
-# # REGISTER
-# log_data = get_log_data(Action.REGISTER, 'success', user=request.user.username)
-# create_log(log_data)
-# # INVALID_PASSWORD
-# log_data = get_log_data(Action.INVALID_PASSWORD, 'error', user=request.user.username)
-# create_log(log_data)
-# # GENERATE_FINANCIAL_STATEMENT
-# log_data = get_log_data(Action.GENERATE_FINANCIAL_STATEMENT, 'success', user=request.user.username)
-# create_log(log_data)
