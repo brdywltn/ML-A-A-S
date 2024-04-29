@@ -38,18 +38,19 @@ import re
 
 logger = logging.getLogger(__name__)
 
-def get_log_data(user, action, status='success', file=None, description=None):
+def get_log_data(user, action, status='success', file=None, description=None, feedback=None):
     log_data = {
         'username': user.username,
         'action': action.value.format(username=user.username),
         'status': status,
         'file': file,
         'description': description,
+        'feedback': feedback,  # Add the feedback field
     }
     return log_data
 
 def create_log(user, log_data):
-    Log.objects.create(user=user, log=log_data)
+    Log.objects.create(user=user, log=log_data, feedback=log_data.get('feedback'))
 
 def handling_music_file(request):
     if request.method == 'POST':
@@ -71,45 +72,67 @@ def log_fileupload(request):
         data = json.loads(request.body)
         status = data.get('status')
         file = data.get('file')
-        description = data.get('description')
 
         if request.user.is_authenticated:
-            log_data = get_log_data(request.user, Action.UPLOAD_FILE, status, file, description)
+            log_data = get_log_data(request.user, Action.UPLOAD_FILE, status, file)
             create_log(request.user, log_data)
 
         return JsonResponse({'message': 'Log created successfully'}, status=201)
 
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
+def submit_feedback(request):
+    if request.method == 'POST' and request.user.is_authenticated:
+        prediction = request.POST.get('prediction')
+        liked = request.POST.get('feedback') == 'true'
+        file_name = request.POST.get('file_name')  # Get the filename from the form data
+        
+        # Create log data using the get_log_data function
+        log_data = get_log_data(
+            user=request.user,
+            action=Action.FEEDBACK_SUBMITTED,
+            status='success',
+            file=file_name,  # Use the filename obtained from the form
+            description=prediction,
+            feedback=liked
+        )
+        
+        # Create the Log entry using the create_log function
+        create_log(request.user, log_data)
+        
+        return redirect('index')
+    
+    return redirect('index')
+
 def admin_table(request):
     # Execute the query and fetch all rows
-    query = """SELECT date, log, user_id FROM myapp_log ORDER BY date DESC"""
+    query = """SELECT date, log, user_id, feedback FROM myapp_log ORDER BY date DESC"""
     with connection.cursor() as cursor:
         cursor.execute(query)
         rows = cursor.fetchall()
-    print(rows)
+
     # Create a list of dictionaries from the query results
     data = []
     for row in rows:
         # Parse the JSON string into a dictionary
         log = json.loads(row[1])
-
         # Get the user object based on the user_id
         user_id = row[2]
-
-        # Create a dictionary with the date, user, and JSON fields
+        # Get the feedback value
+        feedback = row[3]
+        # Create a dictionary with the date, user, JSON fields, and feedback
         date = row[0].strftime('%Y-%m-%d %H:%M:%S')
-        entry = {'date': date, 'user': user_id, 'file': log['file'], 'action': log['action'], 'status': log['status']}
+        entry = {'date': date, 'user': user_id, 'file': log['file'], 'action': log['action'], 'status': log['status'],
+                 'description': log['description'], 'feedback': feedback}
         data.append(entry)
 
     # Return the data as a JSON response
     return JsonResponse({'data': data}, safe=False)
 
-
 def user_table(request):
-    user_id= request.user.id
+    user_id = request.user.id
     # Only display user logs code below
-    query = """SELECT date, log, user_id FROM myapp_log WHERE user_id = {} ORDER BY date DESC""".format(user_id)
+    query = """SELECT date, log, user_id, feedback FROM myapp_log WHERE user_id = {} ORDER BY date DESC""".format(user_id)
     with connection.cursor() as cursor:
         cursor.execute(query)
         rows = cursor.fetchall()
@@ -119,13 +142,14 @@ def user_table(request):
     for row in rows:
         # Parse the JSON string into a dictionary
         log = json.loads(row[1])
-
         # Get the user object based on the user_id
         user_id = row[2]
-
-        # Create a dictionary with the date, user, and JSON fields
+        # Get the feedback value
+        feedback = row[3]
+        # Create a dictionary with the date, user, JSON fields, and feedback
         date = row[0].strftime('%Y-%m-%d %H:%M:%S')
-        entry = {'date': date, 'user': user_id, 'file': log['file'], 'action': log['action'], 'status': log['status']}
+        entry = {'date': date, 'user': user_id, 'file': log['file'], 'action': log['action'], 'status': log['status'],
+                 'description': log['description'], 'feedback': feedback}
         data.append(entry)
 
     # Return the data as a JSON response
@@ -133,36 +157,35 @@ def user_table(request):
 
 def index(request):
     # Initialize default context
-    context = {'form': InstrumentDetectionForm(),
-               'predictions': [],
-               'file_name': None
-               }
+    context = {'form': InstrumentDetectionForm(), 'predictions': [], 'file_name': None}
 
     # Handle authenticated users
     if request.user.is_authenticated:
         token_count = UserTokenCount.objects.get(user=request.user).token_count
         context['token_count'] = token_count
+
         if request.method == 'POST':
             form = InstrumentDetectionForm(request.POST, request.FILES)
             if form.is_valid() and 'audio_file' in request.FILES:
                 uploaded_file = request.FILES['audio_file']
                 context['file_name'] = uploaded_file.name
+
                 # Make a request to the InstrumentDetectionView to get the predictions
                 view = InstrumentDetectionView().as_view()
                 response = view(request)
+
                 # Ensure there's a response and it contains predictions before updating context
                 if response and hasattr(response, 'data') and 'predictions' in response.data:
                     context['predictions'] = response.data['predictions']
+
                     if request.user.is_authenticated:
-                        log_data = get_log_data(request.user, Action.RUN_ALGORITHM, 'success', file=uploaded_file.name,\
-                                                description=response.data["predictions"])
+                        feedback = request.POST.get('feedback')  # Get the user's feedback from the form
+                        predictions_string = ', '.join(response.data['predictions'])
+                        log_data = get_log_data(request.user, Action.RUN_ALGORITHM, 'success', file=uploaded_file.name, 
+                                                description=predictions_string, feedback=feedback)
                         create_log(request.user, log_data)
             else:
                 context['form'] = form
-        # For GET requests or if form is not valid, render the page with the default or updated context
-        return render(request, 'index1.html', context)
-
-    # Handle unauthenticated users
     else:
         if request.method == 'POST':
             # Assuming you want to do something specific with the file if it's uploaded
@@ -170,8 +193,11 @@ def index(request):
             if uploaded_file:
                 # Process the uploaded file as needed
                 pass
-            # For now, just render the main page again, potentially after handling the uploaded file
-        # For GET requests or if POST doesn't involve a file, just show the main page
+
+    # For GET requests or if form is not valid, render the page with the default or updated context
+    if request.user.is_authenticated:
+        return render(request, 'index1.html', context)
+    else:
         return render(request, 'index2.html')
 
 
@@ -323,11 +349,19 @@ class InstrumentDetectionView(APIView):
 
     def format_predictions(self, predictions):
         instruments = ['Guitar', 'Drum', 'Violin', 'Piano']
-        formatted_predictions = []
+        instrument_windows = {instrument: [] for instrument in instruments}
+
         for window_index, prediction in enumerate(predictions, start=1):
-            formatted_window = f"<strong>Window {window_index}</strong><br>"
-            formatted_scores = "<br>".join([f"{instruments[i]} - {score:.2f}" for i, score in enumerate(prediction)])
-            formatted_predictions.append(f"{formatted_window}{formatted_scores}")
+            highest_score_index = prediction.index(max(prediction))
+            highest_score_instrument = instruments[highest_score_index]
+            instrument_windows[highest_score_instrument].append(window_index)
+
+        formatted_predictions = []
+        for instrument, windows in instrument_windows.items():
+            if windows:
+                window_list = ', '.join(map(str, windows))
+                formatted_predictions.append(f"{instrument} - Windows: {window_list}")
+
         return formatted_predictions
     
 

@@ -51,19 +51,49 @@
     
     
     {% if predictions %}
-    <div id="predictions" class="py-8 px-4 mx-auto max-w-screen-xl">
-      <h3 class="text-2xl font-bold mb-4">{{ file_name }} Predictions:</h3>
-      <ul id="predictionList" class="space-y-2">
-        {% for prediction in predictions %}
-          <li class="bg-gray-100 dark:bg-gray-800 px-4 py-2 rounded-md" style="white-space: pre-line;">{{ prediction|safe }}</li>
-        {% endfor %}
-      </ul>
-    </div>
-    {% endif %}
+<div id="predictions" class="py-8 px-4 mx-auto max-w-screen-xl">
+  <h3 class="text-2xl font-bold mb-4">{{ file_name }} Predictions:</h3>
+  <form method="post" action="{% url 'submit_feedback' %}">
+    {% csrf_token %}
+    <input type="hidden" name="file_name" value="{{ file_name }}">
+    <ul id="predictionList" class="space-y-2">
+      {% for prediction in predictions %}
+      <li class="bg-gray-100 dark:bg-gray-800 px-4 py-2 rounded-md" style="white-space: pre-line;">
+        {{ prediction|safe }}
+        <input type="hidden" name="prediction" value="{{ prediction }}">
+        <div class="mt-2">
+          <label>
+            <input type="radio" name="feedback" value="true" required>
+            Like
+          </label>
+          <label class="ml-4">
+            <input type="radio" name="feedback" value="false">
+            Dislike
+          </label>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+    <button type="submit" class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+      Submit Feedback
+    </button>
+  </form>
+</div>
+{% endif %}
   </section>
+{% endblock content %}
 
+{% block scripts %}
 
   <script>
+function submitFeedback(prediction, liked) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', '/submit_feedback', true);
+      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+      xhr.send('prediction=' + encodeURIComponent(prediction) + '&liked=' + liked);
+    }
+
+
 
 function loadAudioFile(event) {
     var file = event.target.files[0];
@@ -177,10 +207,25 @@ function loadAudioFile(event) {
         document.getElementById('uploadForm').addEventListener('reset', function() {
             clearFormAndPredictions();
         });
-    }
 
+        var likeBtns = document.querySelectorAll('.like-btn');
+      var dislikeBtns = document.querySelectorAll('.dislike-btn');
+
+      likeBtns.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var prediction = this.dataset.prediction;
+          submitFeedback(prediction, true);
+        });
+      });
+
+      dislikeBtns.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var prediction = this.dataset.prediction;
+          submitFeedback(prediction, false);
+        });
+      });
+    };
 
   </script>
 
-
-{% endblock content %}
+{% endblock scripts %}
