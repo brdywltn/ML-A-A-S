@@ -167,5 +167,14 @@
     </footer>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
 
+
+  {% if request.user.is_authenticated %}
+    <script type="text/javascript">
+        setTimeout(function(){
+            window.location.href = "{% url 'login' %}";
+        }, {{ request.session.get_expiry_age }}000); // Convert seconds to milliseconds
+    </script>
+  {% endif %}
   </body>
+
 </html>
