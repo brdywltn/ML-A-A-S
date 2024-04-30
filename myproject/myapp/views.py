@@ -396,8 +396,8 @@ class ModelPerformanceView(UserPassesTestMixin, TemplateView):
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_anonymous:
             messages.info(request, 'Must be logged in as an ML Engineer or Admin to access this page.')
-            return redirect('users')
-        elif request.user.profile.user_type != 2 or not request.user.is_superuser:
+            return redirect('login')
+        elif request.user.profile.user_type != 2 and not request.user.is_superuser:
             messages.info(request, 'Must be logged in as an ML Engineer or Admin to access this page.')
             return redirect('users')
         else:
