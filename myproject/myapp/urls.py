@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import InstrumentDetectionView, ModelPerformanceView, index, log_fileupload, users, maintenance, \
-handler404, handler500, terms_conditions, privacy_policy, handling_music_file, pricing, generate_pdf, admin_table,\
+handler404, handler500, terms_conditions, privacy_policy, pricing, generate_pdf, admin_table,\
       change_user_type, submit_feedback
 from .payments import create_payment, execute_payment, payment_cancelled, payment_success
 from django.contrib.auth import views as auth_views
@@ -20,7 +20,6 @@ urlpatterns = [
     path('terms_conditions/', terms_conditions, name='terms_conditions'),
     path('pricay_policy/', privacy_policy, name='privacy_policy'),
     path('pricing/', pricing, name='pricing'),
-    path('uploading_file/', handling_music_file, name='uploading_file'),
     path('submit_feedback/', submit_feedback, name='submit_feedback'),
     path('generate_pdf/', generate_pdf, name='generate_pdf'),
     path('pricing/', pricing, name='pricing'),

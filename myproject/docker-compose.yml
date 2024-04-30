@@ -52,15 +52,11 @@ services:
       - --rest_api_port=8501
       - --model_name=instrument_model
       - --monitoring_config_file=/etc/tensorflow_serving/monitoring_config.txt
-    ports:
-      - "8501:8501"
 
   prometheus:
     image: prom/prometheus
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
-    ports:
-      - "9090:9090"
 
 volumes:
   static_volume:

@@ -93,6 +93,13 @@
     </nav>
     {% endblock navbar %}
     <div class="container mx-auto mt-6">
+      {% if messages %}
+      <div class="space-y-4">
+          {% for message in messages %}
+          <div class="{% if message.tags %}alert-{{ message.tags }}{% endif %}">{{ message }}</div>
+          {% endfor %}
+      </div>
+      {% endif %}
       {% block content %} {% endblock content %}
       {% block scripts %} {% endblock scripts %}
       
