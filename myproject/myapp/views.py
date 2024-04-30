@@ -52,20 +52,6 @@ def get_log_data(user, action, status='success', file=None, description=None, fe
 def create_log(user, log_data):
     Log.objects.create(user=user, log=log_data, feedback=log_data.get('feedback'))
 
-def handling_music_file(request):
-    if request.method == 'POST':
-        if 'audio_file' in request.FILES:
-            log_data = {
-                'action': 'File uploaded',
-                'file': request.FILES['audio_file'].name,
-            }
-            log_data = get_log_data(request.user ,Action.UPLOAD_FILE, 'success', file=request.FILES['audio_file'].name)
-            create_log(request.user if request.user.is_authenticated else None, log_data)
-            return HttpResponse('File uploaded successfully!',log_data)
-    log_data = get_log_data(request.user ,Action.INVALID_FILE, 'error')
-    create_log(None, log_data)
-    return HttpResponse('File invalid',log_data)
-
 @csrf_exempt
 def log_fileupload(request):
     if request.method == 'POST':
@@ -105,55 +91,66 @@ def submit_feedback(request):
     return redirect('index')
 
 def admin_table(request):
-    # Execute the query and fetch all rows
-    query = """SELECT date, log, user_id, feedback FROM myapp_log ORDER BY date DESC"""
-    with connection.cursor() as cursor:
-        cursor.execute(query)
-        rows = cursor.fetchall()
+    if request.user.is_authenticated:
+        if request.user.profile.user_type != 0 or request.user.is_superuser:
+            # Execute the query and fetch all rows
+            query = """SELECT date, log, user_id, feedback FROM myapp_log ORDER BY date DESC"""
+            with connection.cursor() as cursor:
+                cursor.execute(query)
+                rows = cursor.fetchall()
 
-    # Create a list of dictionaries from the query results
-    data = []
-    for row in rows:
-        # Parse the JSON string into a dictionary
-        log = json.loads(row[1])
-        # Get the user object based on the user_id
-        user_id = row[2]
-        # Get the feedback value
-        feedback = row[3]
-        # Create a dictionary with the date, user, JSON fields, and feedback
-        date = row[0].strftime('%Y-%m-%d %H:%M:%S')
-        entry = {'date': date, 'user': user_id, 'file': log['file'], 'action': log['action'], 'status': log['status'],
-                 'description': log['description'], 'feedback': feedback}
-        data.append(entry)
+            # Create a list of dictionaries from the query results
+            data = []
+            for row in rows:
+                # Parse the JSON string into a dictionary
+                log = json.loads(row[1])
+                # Get the user object based on the user_id
+                user_id = row[2]
+                # Get the feedback value
+                feedback = row[3]
+                # Create a dictionary with the date, user, JSON fields, and feedback
+                date = row[0].strftime('%Y-%m-%d %H:%M:%S')
+                entry = {'date': date, 'user': user_id, 'file': log['file'], 'action': log['action'], 'status': log['status'],
+                        'description': log['description'], 'feedback': feedback}
+                data.append(entry)
 
-    # Return the data as a JSON response
-    return JsonResponse({'data': data}, safe=False)
-
+            # Return the data as a JSON response
+            return JsonResponse({'data': data}, safe=False)
+        else:
+            messages.info(request, 'Must be logged in as a non-basic user to access this page.')
+            return redirect('index')
+    else: 
+        messages.info(request, 'Must be logged in as a non-basic user to access this page.')
+        return redirect('login')
 def user_table(request):
-    user_id = request.user.id
-    # Only display user logs code below
-    query = """SELECT date, log, user_id, feedback FROM myapp_log WHERE user_id = {} ORDER BY date DESC""".format(user_id)
-    with connection.cursor() as cursor:
-        cursor.execute(query)
-        rows = cursor.fetchall()
+    if request.user.is_authenticated:
+        user_id = request.user.id
+        # Only display user logs code below
+        query = """SELECT date, log, user_id, feedback FROM myapp_log WHERE user_id = {} ORDER BY date DESC""".format(user_id)
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            rows = cursor.fetchall()
 
-    # Create a list of dictionaries from the query results
-    data = []
-    for row in rows:
-        # Parse the JSON string into a dictionary
-        log = json.loads(row[1])
-        # Get the user object based on the user_id
-        user_id = row[2]
-        # Get the feedback value
-        feedback = row[3]
-        # Create a dictionary with the date, user, JSON fields, and feedback
-        date = row[0].strftime('%Y-%m-%d %H:%M:%S')
-        entry = {'date': date, 'user': user_id, 'file': log['file'], 'action': log['action'], 'status': log['status'],
-                 'description': log['description'], 'feedback': feedback}
-        data.append(entry)
+        # Create a list of dictionaries from the query results
+        data = []
+        for row in rows:
+            # Parse the JSON string into a dictionary
+            log = json.loads(row[1])
+            # Get the user object based on the user_id
+            user_id = row[2]
+            # Get the feedback value
+            feedback = row[3]
+            # Create a dictionary with the date, user, JSON fields, and feedback
+            date = row[0].strftime('%Y-%m-%d %H:%M:%S')
+            entry = {'date': date, 'user': user_id, 'file': log['file'], 'action': log['action'], 'status': log['status'],
+                    'description': log['description'], 'feedback': feedback}
+            data.append(entry)
 
-    # Return the data as a JSON response
-    return JsonResponse({'data': data}, safe=False)
+        # Return the data as a JSON response
+        return JsonResponse({'data': data}, safe=False)
+    else:
+        messages.info(request, 'Must be logged in as a user to access this page.')
+        return redirect('login')
 
 def index(request):
     # Initialize default context
@@ -208,9 +205,7 @@ def users(request):
     if request.user.is_authenticated:
         # Make a request to the admin_table view to get the data
         context = {}
-        data_admin = admin_table(request)
         data_user = user_table(request)
-        admin_dict = json.loads(data_admin.content)
         user_dict = json.loads(data_user.content)
         token_count = UserTokenCount.objects.get(user=request.user).token_count
         user_profile = request.user.profile
@@ -219,7 +214,12 @@ def users(request):
 
         # Pass the data as a context variable to the template
         # !!! ADMIN DATA ONLY DISPLAYED AND GET IF USER IS ADMIN !!!
-        context['admin_data'] = admin_dict['data']
+        if request.user.profile.user_type != 0 or request.user.is_superuser:
+            data_admin = admin_table(request)
+            admin_dict = json.loads(data_admin.content)
+            context['admin_data'] = admin_dict['data']
+
+
         context['user_data'] = user_dict['data']
         context['token_count'] = token_count
         context['user_profile'] = user_profile
@@ -227,7 +227,9 @@ def users(request):
         context['all_user_profiles'] = all_user_profiles  # Add all_user_profiles to the context
 
         return render(request, 'user_page.html', context)
-    return redirect('login')
+    else:
+        messages.info(request, 'Must be logged in as a user to access this page.')
+        return redirect('login')
 
 def handler404(request, *args, **kwargs):
     response = render(request, '404.html', {})
@@ -248,6 +250,12 @@ class RegisterView(generic.CreateView):
     form_class = UserRegisterForm
     success_url = reverse_lazy('index')
     template_name = 'registration/register.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            messages.info(request, 'You are already logged in.')
+            return redirect('index')
+        return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
         response = super().form_valid(form)
@@ -271,6 +279,12 @@ class CustomLoginView(LoginView):
     authentication_form = LoginAuthenticationForm
     template_name = 'registration/login.html'
 
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            messages.info(request, 'You are already logged in.')
+            return redirect('index')
+        return super().dispatch(request, *args, **kwargs)
+
     def form_valid(self, form):
         # Create log if user is authenticated
         login(self.request, form.get_user())
@@ -279,6 +293,8 @@ class CustomLoginView(LoginView):
         create_log(form.get_user(), log_data)
 
         return super().form_valid(form)
+
+
 
 
 def terms_conditions(request):
@@ -304,13 +320,20 @@ def generate_pdf(request):
 
 # Running the audio file through the model
 class InstrumentDetectionView(APIView):
+
+    def dispatch(self, request, *args, **kwargs):
+        user_token_count = UserTokenCount.objects.get(user=request.user)
+        if request.user.is_anonymous:
+            messages.info(request, 'Must be logged in as a user to access this page.')
+            return redirect('login')
+        elif user_token_count.token_count < 1:
+            messages.info(request, 'You do not have enough tokens to make a prediction.')
+            return redirect('pricing')
+        else: return super().dispatch(request, *args, **kwargs)
+    
     def post(self, request):
         # Get the user's token count
         user_token_count = UserTokenCount.objects.get(user=request.user)
-
-        # Check if the user has more than one token
-        if user_token_count.token_count < 1:
-            return Response({'error': 'Insufficient tokens'}, status=status.HTTP_403_FORBIDDEN)
 
         # Decrease the user's token count by one
         user_token_count.token_count -= 1
@@ -369,6 +392,16 @@ class InstrumentDetectionView(APIView):
 
 class ModelPerformanceView(UserPassesTestMixin, TemplateView):
     template_name = 'model_performance.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_anonymous:
+            messages.info(request, 'Must be logged in as an ML Engineer or Admin to access this page.')
+            return redirect('users')
+        elif request.user.profile.user_type != 2 or not request.user.is_superuser:
+            messages.info(request, 'Must be logged in as an ML Engineer or Admin to access this page.')
+            return redirect('users')
+        else:
+            return super().dispatch(request, *args, **kwargs)
 
     def test_func(self):
         return self.request.user.is_authenticated and (self.request.user.is_superuser or self.request.user.profile.user_type == 2)
