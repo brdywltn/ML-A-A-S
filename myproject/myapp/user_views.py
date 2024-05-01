@@ -11,6 +11,7 @@ from .decorators import admin_required, ml_engineer_required, accountant_require
 from .models import Action
 from .utils import get_log_data, create_log
 
+
 @login_required
 @admin_ml_engineer_required
 def admin_table(request):
@@ -100,6 +101,16 @@ def change_user_type(request, user_id):
         user_profile = get_object_or_404(Profile, user__id=user_id)
         user_profile.user_type = user_type
         user_profile.save()
+
+        user = user_profile.user
+        if user_type == '1':
+            user.is_superuser = True
+            user.is_staff = True
+            user.save()
+        else:
+            user.is_superuser = False
+            user.is_staff = False
+            user.save()
         
         user_type_display = user_profile.get_user_type_display()
         log_data = get_log_data(request.user, Action.CHANGE_USER_TYPE, user_type=user_type_display, description=f"{request.user.username} changed {user_profile.user.username}'s user type to {user_type_display}")

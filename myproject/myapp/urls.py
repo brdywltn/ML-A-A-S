@@ -47,6 +47,7 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(), name='logout'),
     path('register/', RegisterView.as_view(), name='register'),
     path('user_logout/', auth_views.LogoutView.as_view(next_page='index'), name='user_logout'),
+    
     # Payment
     path('payment/create/<str:purchase_type>', create_payment, name='create_payment'),
     path('payment/execute/', execute_payment, name='execute_payment'),

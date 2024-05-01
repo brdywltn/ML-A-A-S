@@ -7,7 +7,7 @@ import logging
 import json
 
 from .forms import InstrumentDetectionForm
-from .models import Action, UserTokenCount, Profile, ModelConfig, ModelPerformanceMetrics
+from .models import Action, UserTokenCount, Profile, ModelConfig, ModelPerformanceMetrics, Log
 
 # Django Rest Framework imports
 from rest_framework.views import APIView
@@ -20,7 +20,6 @@ import requests
 # Authentication Imports
 from django.urls import reverse_lazy
 from django.views import View, generic
-from .models import Profile, ModelConfig
 from .forms import UserRegisterForm, LoginAuthenticationForm
 from django.contrib.auth.views import LoginView
 
@@ -320,6 +319,19 @@ class ModelPerformanceView(UserPassesTestMixin, TemplateView):
             }
         else:
             context['metrics'] = None
+        
+        # Retrieve feedback data from the Log model
+        feedback_logs = Log.objects.exclude(feedback__isnull=True)
+        total_ratings = feedback_logs.count()
+        likes_count = feedback_logs.filter(feedback=True).count()
+
+        if total_ratings > 0:
+            satisfaction_percentage = round(likes_count / total_ratings * 100, 2)
+        else:
+            satisfaction_percentage = 0
+
+        context['satisfaction_percentage'] = satisfaction_percentage
+        context['total_ratings'] = total_ratings
 
         return context
     def post(self, request, *args, **kwargs):
@@ -337,7 +349,7 @@ class ModelSelectionView(UserPassesTestMixin, View):
         if request.user.is_anonymous:
             messages.info(request, 'Must be logged in as an ML Engineer or Superuser to access this page.')
             return redirect('login')
-        elif request.user.profile.user_type != 2 and not request.user.is_superuser:
+        elif request.user.profile.user_type != 2:
             messages.info(request, 'Must be logged in as an ML Engineer or Superuser to access this page.')
             return redirect('users')
         else:
