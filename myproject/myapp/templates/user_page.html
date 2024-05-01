@@ -220,15 +220,12 @@
             <td class="px-6 py-4">{{entry.action}}</td>
             <td class="px-6 py-4">
               {% if entry.file %}
-              <a
-                href="#"
-                class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                >{{entry.file}}</a
-              >
-              {% if entry.description %}
-              <button type="button" class="ml-4 px-2 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600" onclick="showModal('{{entry.description|join:'\n'}}')">
+              <span>Filename: {{entry.file}}</span>
+              {% elif entry.description %}
+              <!-- <button type="button" class="ml-4 px-2 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600" onclick="showModal('{{entry.description|join:'\n'}}')">
                 Show Results
-              </button>
+              </button> -->
+              <span>{{ entry.description }}</span>
               {% endif %}
             </td>
           </tr>
