@@ -5,7 +5,8 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from .models import UserTokenCount
+from .views import get_log_data, create_log
+from .models import UserTokenCount, Action
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -110,6 +111,13 @@ def execute_payment(request):
         tokens_purchased = request.session.get("purchase_quantity")
 
         add_tokens(request.user, tokens_purchased)
+        # log_data = {
+        #     'action': 'Tokens purchased',
+
+        # }
+        log_data = get_log_data(request.user, Action.PAYMENT_SUCCESSFUL, 'success', description=f"Purchased {tokens_purchased} tokens")
+        create_log(request.user if request.user.is_authenticated else None, log_data)
+
 
         return redirect('success')
     else:
@@ -121,7 +129,7 @@ def add_tokens(user, tokens):
     token_count_instance, created = UserTokenCount.objects.get_or_create(user=user)
     token_count_instance.token_count += int(tokens)
     token_count_instance.save()
-
+    
 def payment_cancelled(request):
     return render(request, 'payment_cancelled.html')
 

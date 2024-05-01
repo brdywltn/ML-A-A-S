@@ -187,11 +187,19 @@
 {{entry.date}}            </th>
             <td class="px-6 py-4">{{entry.action}}</td>
             <td class="px-6 py-4">
+              {% if entry.file %}
               <a
                 href="#"
                 class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
                 >{{entry.file}}</a
               >
+               {% elif entry.description %}
+               <a
+               href="#"
+               class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+               >{{entry.description}}</a
+             >
+               {% endif %}
             </td>
           </tr>
           {%endfor%}
