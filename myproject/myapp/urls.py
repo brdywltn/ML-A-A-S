@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import InstrumentDetectionView, ModelPerformanceView, index, log_fileupload, users, maintenance, \
+from .views import InstrumentDetectionView, ModelPerformanceView, ModelSelectionView, index, log_fileupload, users, maintenance, \
 handler404, handler500, terms_conditions, privacy_policy, pricing, generate_pdf, admin_table,\
       change_user_type, submit_feedback
 from .payments import create_payment, execute_payment, payment_cancelled, payment_success
@@ -26,6 +26,7 @@ urlpatterns = [
     path('generate_pdf/', generate_pdf, name='generate_pdf'),
     path('instrument_detection/', InstrumentDetectionView.as_view(), name='instrument_detection'),
     path('model_performance/', ModelPerformanceView.as_view(), name='model_performance'),
+    path('model_selection/', ModelSelectionView.as_view(), name='model_selection'),
     path('password_change/', auth_views.PasswordChangeView.as_view(template_name='password_change_form.html'), name='password_change'),
     path('password_change/done/', auth_views.PasswordChangeDoneView.as_view(template_name='password_change_done.html'), name='password_change_done'),
 

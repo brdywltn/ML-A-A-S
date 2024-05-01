@@ -19,6 +19,7 @@ services:
     volumes:
       - .:/usr/src/app
       - static_volume:/usr/src/app/static
+      - ./models:/usr/src/app/models
     depends_on:
       - db
       - tensorflow_serving

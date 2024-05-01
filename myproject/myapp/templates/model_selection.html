@@ -1,0 +1,15 @@
+{% extends '_base.html' %}
+
+{% block content %}
+  <h1>Model Version Selection</h1>
+  <form method="post">
+    {% csrf_token %}
+    <label for="model_version">Select Model Version:</label>
+    <select name="model_version" id="model_version">
+      {% for version in model_versions %}
+        <option value="{{ version }}" {% if selected_model_version == version %}selected{% endif %}>{{ version }}</option>
+      {% endfor %}
+    </select>
+    <button type="submit">Save</button>
+  </form>
+{% endblock %}
