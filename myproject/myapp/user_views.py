@@ -8,6 +8,8 @@ import json
 
 from .decorators import admin_required, ml_engineer_required, accountant_required, login_required, admin_accountant_required, \
     admin_ml_engineer_required
+from .models import Action
+from .utils import get_log_data, create_log
 
 @login_required
 @admin_ml_engineer_required
@@ -95,7 +97,12 @@ def users(request):
 def change_user_type(request, user_id):
     if request.method == 'POST':
         user_type = request.POST.get('user_type')
-        user_profile = get_object_or_404(Profile, user__id=user_id)  # Get the user profile
+        user_profile = get_object_or_404(Profile, user__id=user_id)
         user_profile.user_type = user_type
         user_profile.save()
-        return redirect('users')  # Redirect to the users page
+        
+        user_type_display = user_profile.get_user_type_display()
+        log_data = get_log_data(request.user, Action.CHANGE_USER_TYPE, user_type=user_type_display, description=f"{request.user.username} changed {user_profile.user.username}'s user type to {user_type_display}")
+        create_log(request.user, log_data)
+        messages.success(request, f'{user_profile.user.username}\'s user type has been changed to {user_type_display}.')
+        return redirect('users')

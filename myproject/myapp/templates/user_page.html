@@ -260,56 +260,44 @@
 {% endif %}
 
 
-    {% if user.is_superuser  or user_profile.user_type == 1 %}
-  <div class="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
-    <h3 class="mb-4 text-xl font-semibold dark:text-white">
-      User Management
-    </h3>
-    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-      <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-        <tr>
-          <th scope="col" class="px-6 py-3">Username</th>
-          <th scope="col" class="px-6 py-3">User Type</th>
-          <th scope="col" class="px-6 py-3">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for user_profile in all_user_profiles %}
-        <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
-          <td class="px-6 py-4">{{ user_profile.user.username }}</td>
-          <td class="px-6 py-4">
-            {% if user_profile.is_superuser %}
-            Superuser
-            {% elif user_profile.user_type == 1 %}
-            Admin
-            {% elif user_profile.user_type == 2 %}
-            ML Engineer
-            {% elif user_profile.user_type == 3 %}
-            Accountant
-            {% else %}
-              User
-            {% endif %}
-          </td>
-          <td class="px-6 py-4">
-            <form action="{% url 'change_user_type' user_profile.user.id %}" method="post">
-              {% csrf_token %}
-              <select name="user_type">
-                <option value="0">User</option>
-                <option value="1">Admin</option>
-                <option value="2">ML Engineer</option>
-                <option value="3">Accountant</option>
-              </select>
-              <button type="submit" class="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
-                Change User Type
-              </button>
-            </form>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-
+{% if user.is_superuser or user_profile.user_type == 1 %}
+<div class="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
+  <h3 class="mb-4 text-xl font-semibold dark:text-white">
+    User Management
+  </h3>
+  <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+      <tr>
+        <th scope="col" class="px-6 py-3">Username</th>
+        <th scope="col" class="px-6 py-3">User Type</th>
+        <th scope="col" class="px-6 py-3">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user_profile in all_user_profiles %}
+      <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+        <td class="px-6 py-4">{{ user_profile.user.username }}</td>
+        <td class="px-6 py-4">{{ user_profile.get_user_type_display }}</td>
+        <td class="px-6 py-4">
+          <form action="{% url 'change_user_type' user_profile.user.id %}" method="post">
+            {% csrf_token %}
+            <select name="user_type">
+              {% for type_value, type_display in user_profile.USER_TYPES %}
+              <option value="{{ type_value }}" {% if user_profile.user_type == type_value %}selected{% endif %}>
+                {{ type_display }}
+              </option>
+              {% endfor %}
+            </select>
+            <button type="submit" class="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+              Change User Type
+            </button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
 {% endif %}
     {% endif %} {% comment %} Admin page functionality end {% endcomment %}
   </div>
