@@ -5,6 +5,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.shortcuts import redirect, render
 from django.urls import reverse
+from .models import Action, UserTokenCount, Payment
 from .views import get_log_data, create_log
 from .models import UserTokenCount, Action
 from rest_framework.response import Response
@@ -82,12 +83,56 @@ def create_payment(request, purchase_type):
 
 
 # Execute a successful payment
+# def execute_payment(request):
+#     # Get payment id and payer id
+#     payment_id = request.GET.get('paymentId')
+#     payer_id = request.GET.get('PayerID')
+
+#     #If neither ID, error, restart
+#     if not payment_id or not payer_id:
+#         print("no payment")
+#         #TODO: Change this to a more appropriate path, maybe a generic error page that takes a string:Error to display in a template
+#         return redirect('handler404')
+
+#     # configure API
+#     paypalrestsdk.configure({
+#         "mode": settings.PAYPAL_MODE,
+#         "client_id": settings.PAYPAL_CLIENT_ID,
+#         "client_secret": settings.PAYPAL_CLIENT_SECRET
+#     })
+
+#     # Check we've got a successful payment
+#     payment = paypalrestsdk.Payment.find(payment_id)
+
+#     # If it we do an the payer IDs match
+#     if payment.execute({"payer_id": payer_id}):
+#         print("Payment executed successfully!")
+
+#         # Allocate some tokens
+#         user = request.user
+#         tokens_purchased = 1
+
+#         # increment user_tokens
+#         # commit changes
+#         # TODO: Change something here such that the token amount added depends on a detail of the transaction,
+#         #       i.e. £9.99 payment for one token or £24.99 for
+#         #
+#         if request.user.is_authenticated:
+#             add_tokens(user, tokens_purchased)
+#             return redirect('success')
+#         else:
+#             return redirect('handler404')
+#     else:
+#         #TODO: Change this to a more appropriate error message
+#         print("exiting at the end of execute_payment()")
+#         return redirect('handler404')
+
 def execute_payment(request):
     # Get payment id and payer id
     payment_id = request.GET.get('paymentId')
     payer_id = request.GET.get('PayerID')
 
-    #If neither ID, error, restart
+    # If neither ID, error, restart
     if not payment_id or not payer_id:
         print("no payment id or payer_id")
         return Response({"error": "Error: No payment id or payer id was found."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -102,7 +147,7 @@ def execute_payment(request):
     # Check we've got a successful payment
     payment = paypalrestsdk.Payment.find(payment_id)
 
-    # If it we do an the payer IDs match
+    # If it we do and the payer IDs match
     if payment.execute({"payer_id": payer_id}):
         print("Payment executed successfully!")
         print(f"Payment: {payment}")
@@ -123,7 +168,6 @@ def execute_payment(request):
     else:
         print("exiting at the end of execute_payment(), incorrect payer id")
         return Response({"error": "Error: Payment failed to execute, incorrect payer id"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 def add_tokens(user, tokens):
     token_count_instance, created = UserTokenCount.objects.get_or_create(user=user)

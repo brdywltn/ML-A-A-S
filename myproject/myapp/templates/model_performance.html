@@ -1,18 +1,26 @@
+<!-- model_performance.html -->
 {% extends "_base.html" %}
 
 {% block content %}
 <div class="container mx-auto px-4">
-  <h1 class="text-2xl font-bold mb-4">Model Performance</h1>
-  
-  {% if metrics %}
+    <h1 class="text-2xl font-bold mb-4">Model Performance</h1>
+
+    {% if metrics %}
     <div class="bg-white shadow-md rounded p-6">
-      <p><strong>Request Count:</strong> {{ metrics.request_count }}</p>
-      <p><strong>Average Request Latency:</strong> {{ metrics.avg_request_latency|floatformat:6 }} seconds</p>
-      <p><strong>Average Runtime Latency:</strong> {{ metrics.avg_runtime_latency|floatformat:6 }} seconds</p>
-      <p><strong>Model Load Latency:</strong> {{ metrics.model_load_latency|floatformat:6 }} seconds</p>
+        <p><strong>Request Count:</strong> {{ metrics.request_count }}</p>
+        <p><strong>Average Request Latency:</strong> {{ metrics.avg_request_latency|floatformat:6 }} seconds</p>
+        <p><strong>Average Runtime Latency:</strong> {{ metrics.avg_runtime_latency|floatformat:6 }} seconds</p>
+        <p><strong>Model Load Latency:</strong> {{ metrics.model_load_latency|floatformat:6 }} seconds</p>
     </div>
-  {% else %}
+    {% else %}
     <p>Failed to retrieve model performance metrics.</p>
-  {% endif %}
+    {% endif %}
+
+    <form method="post" action="{% url 'model_performance' %}" class="mt-4">
+        {% csrf_token %}
+        <button type="submit" name="reset_metrics" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            Reset Metrics
+        </button>
+    </form>
 </div>
 {% endblock content %}

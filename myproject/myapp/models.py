@@ -57,3 +57,43 @@ class Log(models.Model):
     log = models.JSONField()
     feedback = models.BooleanField(null=True)
 
+class ModelConfig(models.Model):
+    selected_model_version = models.CharField(max_length=255, default='2')
+
+    def save(self, *args, **kwargs):
+        # Ensure there's only one instance of ModelConfig
+        self.pk = 1
+        super().save(*args, **kwargs)
+
+    @classmethod
+    def load(cls):
+        obj, _ = cls.objects.get_or_create(pk=1)
+        return obj
+
+class ModelPerformanceMetrics(models.Model):
+    request_count = models.IntegerField(default=0)
+    request_latency_sum = models.FloatField(default=0)
+    request_latency_count = models.IntegerField(default=0)
+    runtime_latency_sum = models.FloatField(default=0)
+    runtime_latency_count = models.IntegerField(default=0)
+    model_load_latency = models.FloatField(default=0)
+
+    def reset_metrics(self):
+        self.request_count = 0
+        self.request_latency_sum = 0
+        self.request_latency_count = 0
+        self.runtime_latency_sum = 0
+        self.runtime_latency_count = 0
+        self.model_load_latency = 0
+        self.save(force_update=True)
+
+class Payment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    payment_id = models.CharField(max_length=255)
+    payer_id = models.CharField(max_length=255)
+    date = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f'Payment by {self.user.username} - Amount: {self.amount}'
+

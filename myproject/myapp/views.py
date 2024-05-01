@@ -1,3 +1,5 @@
+# views.py
+import os
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
@@ -12,7 +14,7 @@ import json
 from datetime import datetime
 
 from .forms import InstrumentDetectionForm
-from .models import Log, Action, User, UserTokenCount, Profile
+from .models import Log, Action, User, UserTokenCount, Profile, ModelConfig, ModelPerformanceMetrics
 from django.http import JsonResponse
 from django.db import connection
 
@@ -26,8 +28,8 @@ import requests
 
 # Authentication Imports
 from django.urls import reverse_lazy
-from django.views import generic
-from .models import Profile
+from django.views import View, generic
+from .models import Profile, ModelConfig
 from .forms import UserRegisterForm, LoginAuthenticationForm
 from django.contrib.auth.views import LoginView
 from django.views.decorators.csrf import csrf_exempt
@@ -370,42 +372,50 @@ class InstrumentDetectionView(APIView):
         else: return super().dispatch(request, *args, **kwargs)
     
     def post(self, request):
-        # Get the user's token count
-        user_token_count = UserTokenCount.objects.get(user=request.user)
+        try:
+            model_config = ModelConfig.load()
+            selected_model_version = model_config.selected_model_version
+            # Get the user's token count
+            user_token_count = UserTokenCount.objects.get(user=request.user)
 
-        # Decrease the user's token count by one
-        user_token_count.token_count -= 1
-        user_token_count.save()
+            # Decrease the user's token count by one
+            user_token_count.token_count -= 1
+            user_token_count.save()
 
-        serializer = InstrumentDetectionSerializer(data=request.data)
-        if serializer.is_valid():
-            audio_file = serializer.validated_data['audio_file']
+            serializer = InstrumentDetectionSerializer(data=request.data)
+            if serializer.is_valid():
+                audio_file = serializer.validated_data['audio_file']
 
-            # Save the uploaded file temporarily
-            # with open('temp_audio.wav', 'wb') as f:
-            #     f.write(audio_file.read())
+                # Save the uploaded file temporarily
+                # with open('temp_audio.wav', 'wb') as f:
+                #     f.write(audio_file.read())
 
-            # Preprocess the audio file
-            preprocessed_data = preprocess_audio_for_inference(audio_file)
+                # Preprocess the audio file
+                preprocessed_data = preprocess_audio_for_inference(audio_file)
 
-            # Prepare data for TensorFlow Serving
-            data = json.dumps({"signature_name": "serving_default", "instances": [window.tolist() for window in preprocessed_data]})
+                # Prepare data for TensorFlow Serving
+                data = json.dumps({"signature_name": "serving_default", "instances": [window.tolist() for window in preprocessed_data]})
 
-            # Send request to TensorFlow Serving
-            url = 'http://tensorflow_serving:8501/v1/models/instrument_model/versions/2:predict'
-            headers = {"Content-Type": "application/json"}
-            response = requests.post(url, data=data, headers=headers)
+                # Send request to TensorFlow Serving
+                # url = 'http://tensorflow_serving:8501/v1/models/instrument_model/versions/2:predict'
+                url = f'http://tensorflow_serving:8501/v1/models/instrument_model/versions/{selected_model_version}:predict'
+                headers = {"Content-Type": "application/json"}
+                response = requests.post(url, data=data, headers=headers)
 
-            # Process the response
-            if response.status_code == 200:
-                raw_predictions = response.json()['predictions']
-                # Convert raw prediction numbers into percentages
-                formatted_predictions = self.format_predictions(raw_predictions)
-                return Response({"predictions": formatted_predictions}, status=status.HTTP_200_OK)
-            else:
-                return Response({"error": "Failed to get predictions"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                # Process the response
+                if response.status_code == 200:
+                    print('Predictions received')
+                    raw_predictions = response.json()['predictions']
+                    # Convert raw prediction numbers into percentages
+                    formatted_predictions = self.format_predictions(raw_predictions)
+                    return Response({"predictions": formatted_predictions}, status=status.HTTP_200_OK)
+                else:
+                    return Response({"error": "Failed to get predictions"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            logger.error(f"An error occurred: {e}")
+            messages.error(request, 'An error occurred: {e}')
+            return redirect('index')
 
 
     def format_predictions(self, predictions):
@@ -433,10 +443,10 @@ class ModelPerformanceView(UserPassesTestMixin, TemplateView):
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_anonymous:
-            messages.info(request, 'Must be logged in as an ML Engineer or Admin to access this page.')
+            messages.info(request, 'Must be logged in as an ML Engineer or Superuser to access this page.')
             return redirect('login')
         elif request.user.profile.user_type != 2 and not request.user.is_superuser:
-            messages.info(request, 'Must be logged in as an ML Engineer or Admin to access this page.')
+            messages.info(request, 'Must be logged in as an ML Engineer or Superuser to access this page.')
             return redirect('users')
         else:
             return super().dispatch(request, *args, **kwargs)
@@ -461,21 +471,73 @@ class ModelPerformanceView(UserPassesTestMixin, TemplateView):
             runtime_latency_count = re.search(r':tensorflow:serving:runtime_latency_count{model_name="instrument_model",API="Predict",runtime="TF1"} (\d+)', metrics_data)
             model_load_latency = re.search(r':tensorflow:cc:saved_model:load_latency{model_path="/models/instrument_model/2"} (\d+)', metrics_data)
 
+            # Get or create the ModelPerformanceMetrics instance
+            metrics, _ = ModelPerformanceMetrics.objects.get_or_create(pk=1)
+
+            # Update the metrics in the database
+            metrics.request_count = int(request_count.group(1)) if request_count else 0
+            metrics.request_latency_sum = float(request_latency_sum.group(1)) if request_latency_sum else 0
+            metrics.request_latency_count = int(request_latency_count.group(1)) if request_latency_count else 0
+            metrics.runtime_latency_sum = float(runtime_latency_sum.group(1)) if runtime_latency_sum else 0
+            metrics.runtime_latency_count = int(runtime_latency_count.group(1)) if runtime_latency_count else 0
+            metrics.model_load_latency = float(model_load_latency.group(1)) if model_load_latency else 0
+            metrics.save()
+
             # Calculate average latencies in seconds
-            avg_request_latency = float(request_latency_sum.group(1)) / float(request_latency_count.group(1)) / 1e6 if request_latency_sum and request_latency_count else None
-            avg_runtime_latency = float(runtime_latency_sum.group(1)) / float(runtime_latency_count.group(1)) / 1e6 if runtime_latency_sum and runtime_latency_count else None
-            model_load_latency_seconds = float(model_load_latency.group(1)) / 1e6 if model_load_latency else None
+            avg_request_latency = metrics.request_latency_sum / metrics.request_latency_count / 1e6 if metrics.request_latency_count else None
+            avg_runtime_latency = metrics.runtime_latency_sum / metrics.runtime_latency_count / 1e6 if metrics.runtime_latency_count else None
 
             context['metrics'] = {
-                'request_count': request_count.group(1) if request_count else None,
+                'request_count': metrics.request_count,
                 'avg_request_latency': avg_request_latency,
                 'avg_runtime_latency': avg_runtime_latency,
-                'model_load_latency': model_load_latency_seconds
+                'model_load_latency': metrics.model_load_latency / 1e6
             }
         else:
             context['metrics'] = None
 
         return context
+    def post(self, request, *args, **kwargs):
+        if 'reset_metrics' in request.POST:
+            metrics = ModelPerformanceMetrics.objects.get(pk=1)
+            metrics.reset_metrics()
+            metrics.save()
+            return redirect('users')
+        else:
+            messages.error(request, 'Invalid request')
+            return redirect('users')
+
+class ModelSelectionView(UserPassesTestMixin, View):
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_anonymous:
+            messages.info(request, 'Must be logged in as an ML Engineer or Superuser to access this page.')
+            return redirect('login')
+        elif request.user.profile.user_type != 2 and not request.user.is_superuser:
+            messages.info(request, 'Must be logged in as an ML Engineer or Superuser to access this page.')
+            return redirect('users')
+        else:
+            return super().dispatch(request, *args, **kwargs)
+
+    def test_func(self):
+        return self.request.user.is_authenticated and self.request.user.profile.user_type == 2
+
+    def get(self, request):
+        model_versions = os.listdir('models/instrument_model')
+        model_config = ModelConfig.load()
+        context = {
+            'model_versions': model_versions,
+            'selected_model_version': model_config.selected_model_version,
+        }
+        return render(request, 'model_selection.html', context)
+
+    def post(self, request):
+        selected_model_version = request.POST.get('model_version')
+        model_config = ModelConfig.load()
+        model_config.selected_model_version = selected_model_version
+        model_config.save()
+        return redirect('model_selection')
+    
+
 
 def change_user_type(request, user_id):
     if request.method == 'POST':
@@ -487,7 +549,4 @@ def change_user_type(request, user_id):
 
 def user_has_credits():
     has_credits = False
-
-
-
     return has_credits
