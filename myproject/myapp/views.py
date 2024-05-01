@@ -1,22 +1,13 @@
 # views.py
 import os
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
+from django.contrib.auth import login
 from django.contrib import messages
-from django.http import HttpResponse
-from django.utils import timezone
-from django.shortcuts import render, redirect, get_object_or_404
-from django.template import RequestContext
+from django.shortcuts import render, redirect
 import logging
-from reportlab.pdfgen import canvas
 import json
-from datetime import datetime
 
 from .forms import InstrumentDetectionForm
-from .models import Log, Action, User, UserTokenCount, Profile, ModelConfig, ModelPerformanceMetrics
-from django.http import JsonResponse
-from django.db import connection
+from .models import Action, UserTokenCount, Profile, ModelConfig, ModelPerformanceMetrics
 
 # Django Rest Framework imports
 from rest_framework.views import APIView
@@ -32,42 +23,36 @@ from django.views import View, generic
 from .models import Profile, ModelConfig
 from .forms import UserRegisterForm, LoginAuthenticationForm
 from django.contrib.auth.views import LoginView
-from django.views.decorators.csrf import csrf_exempt
 
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.views.generic import TemplateView
+
 import re
+
+from .utils import get_log_data, create_log
 
 logger = logging.getLogger(__name__)
 
-def get_log_data(user, action, status='success', file=None, description=None, feedback=None):
-    log_data = {
-        'username': user.username,
-        'action': action.value.format(username=user.username),
-        'status': status,
-        'file': file,
-        'description': description,
-        'feedback': feedback,  # Add the feedback field
-    }
-    return log_data
+def handler404(request, *args, **kwargs):
+    response = render(request, '404.html', {})
+    response.status_code = 404
+    return response
 
-def create_log(user, log_data):
-    Log.objects.create(user=user, log=log_data, feedback=log_data.get('feedback'))
+def handler500(request, *args, **kwargs):
+    response = render(request, '500.html', {})
+    response.status_code = 500
+    return response
 
-@csrf_exempt
-def log_fileupload(request):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        status = data.get('status')
-        file = data.get('file')
+def maintenance(request):
+    return render(request, 'maintenance.html')
+def terms_conditions(request):
+    return render(request, 'terms_conditions.html')
 
-        if request.user.is_authenticated:
-            log_data = get_log_data(request.user, Action.UPLOAD_FILE, status, file)
-            create_log(request.user, log_data)
+def privacy_policy(request):
+    return render(request, 'privacy_policy.html')
 
-        return JsonResponse({'message': 'Log created successfully'}, status=201)
-
-    return JsonResponse({'error': 'Invalid request'}, status=400)
+def pricing(request):
+    return render(request, 'pricing.html')
 
 def submit_feedback(request):
     if request.method == 'POST' and request.user.is_authenticated:
@@ -89,108 +74,10 @@ def submit_feedback(request):
         create_log(request.user, log_data)
         
         return redirect('index')
-    
-    return redirect('index')
-
-@csrf_exempt
-def log_fileupload(request):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        status = data.get('status')
-        file = data.get('file')
-
-        if request.user.is_authenticated:
-            log_data = get_log_data(request.user, Action.UPLOAD_FILE, status, file)
-            create_log(request.user, log_data)
-
-        return JsonResponse({'message': 'Log created successfully'}, status=201)
-
-    return JsonResponse({'error': 'Invalid request'}, status=400)
-
-def submit_feedback(request):
-    if request.method == 'POST' and request.user.is_authenticated:
-        prediction = request.POST.get('prediction')
-        liked = request.POST.get('feedback') == 'true'
-        file_name = request.POST.get('file_name')  # Get the filename from the form data
-        
-        # Create log data using the get_log_data function
-        log_data = get_log_data(
-            user=request.user,
-            action=Action.FEEDBACK_SUBMITTED,
-            status='success',
-            file=file_name,  # Use the filename obtained from the form
-            description=prediction,
-            feedback=liked
-        )
-        
-        # Create the Log entry using the create_log function
-        create_log(request.user, log_data)
-        
-        return redirect('index')
-    
-    return redirect('index')
-
-def admin_table(request):
-    if request.user.is_authenticated:
-        if request.user.profile.user_type != 0 or request.user.is_superuser:
-            # Execute the query and fetch all rows
-            query = """SELECT date, log, user_id, feedback FROM myapp_log ORDER BY date DESC"""
-            with connection.cursor() as cursor:
-                cursor.execute(query)
-                rows = cursor.fetchall()
-
-            # Create a list of dictionaries from the query results
-            data = []
-            for row in rows:
-                # Parse the JSON string into a dictionary
-                log = json.loads(row[1])
-                # Get the user object based on the user_id
-                user_id = row[2]
-                # Get the feedback value
-                feedback = row[3]
-                # Create a dictionary with the date, user, JSON fields, and feedback
-                date = row[0].strftime('%Y-%m-%d %H:%M:%S')
-                entry = {'date': date, 'user': user_id, 'file': log['file'], 'action': log['action'], 'status': log['status'],
-                        'description': log['description'], 'feedback': feedback}
-                data.append(entry)
-
-            # Return the data as a JSON response
-            return JsonResponse({'data': data}, safe=False)
-        else:
-            messages.info(request, 'Must be logged in as a non-basic user to access this page.')
-            return redirect('index')
-    else: 
-        messages.info(request, 'Must be logged in as a non-basic user to access this page.')
-        return redirect('login')
-def user_table(request):
-    if request.user.is_authenticated:
-        user_id = request.user.id
-        # Only display user logs code below
-        query = """SELECT date, log, user_id, feedback FROM myapp_log WHERE user_id = {} ORDER BY date DESC""".format(user_id)
-        with connection.cursor() as cursor:
-            cursor.execute(query)
-            rows = cursor.fetchall()
-
-        # Create a list of dictionaries from the query results
-        data = []
-        for row in rows:
-            # Parse the JSON string into a dictionary
-            log = json.loads(row[1])
-            # Get the user object based on the user_id
-            user_id = row[2]
-            # Get the feedback value
-            feedback = row[3]
-            # Create a dictionary with the date, user, JSON fields, and feedback
-            date = row[0].strftime('%Y-%m-%d %H:%M:%S')
-            entry = {'date': date, 'user': user_id, 'file': log['file'], 'action': log['action'], 'status': log['status'],
-                    'description': log['description'], 'feedback': feedback}
-            data.append(entry)
-
-        # Return the data as a JSON response
-        return JsonResponse({'data': data}, safe=False)
     else:
-        messages.info(request, 'Must be logged in as a user to access this page.')
-        return redirect('login')
+        messages.error(request, 'Invalid request')
+        return redirect('index')
+
 
 def index(request):
     # Initialize default context
@@ -237,52 +124,6 @@ def index(request):
     else:
         return render(request, 'index2.html')
 
-
-
-
-
-def users(request):
-    if request.user.is_authenticated:
-        # Make a request to the admin_table view to get the data
-        context = {}
-        data_user = user_table(request)
-        user_dict = json.loads(data_user.content)
-        token_count = UserTokenCount.objects.get(user=request.user).token_count
-        user_profile = request.user.profile
-        user = request.user
-        all_user_profiles = Profile.objects.all()  # Retrieve all Profile objects
-
-        # Pass the data as a context variable to the template
-        # !!! ADMIN DATA ONLY DISPLAYED AND GET IF USER IS ADMIN !!!
-        if request.user.profile.user_type != 0 or request.user.is_superuser:
-            data_admin = admin_table(request)
-            admin_dict = json.loads(data_admin.content)
-            context['admin_data'] = admin_dict['data']
-
-
-        context['user_data'] = user_dict['data']
-        context['token_count'] = token_count
-        context['user_profile'] = user_profile
-        context['user'] = user
-        context['all_user_profiles'] = all_user_profiles  # Add all_user_profiles to the context
-
-        return render(request, 'user_page.html', context)
-    else:
-        messages.info(request, 'Must be logged in as a user to access this page.')
-        return redirect('login')
-
-def handler404(request, *args, **kwargs):
-    response = render(request, '404.html', {})
-    response.status_code = 404
-    return response
-
-def handler500(request, *args, **kwargs):
-    response = render(request, '500.html', {})
-    response.status_code = 500
-    return response
-
-def maintenance(request):
-    return render(request, 'maintenance.html')
 
 
 # Authentication
@@ -337,38 +178,22 @@ class CustomLoginView(LoginView):
 
 
 
-def terms_conditions(request):
-    return render(request, 'terms_conditions.html')
-
-def privacy_policy(request):
-    return render(request, 'privacy_policy.html')
-
-def pricing(request):
-    return render(request, 'pricing.html')
-
-#For testing the receipts ONLY. TODO: delete when working
-def generate_pdf(request):
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="example.pdf"'
-
-    p = canvas.Canvas(response)
-    p.drawString(100, 800, "Hello, this is a PDF!")
-    p.showPage()
-    p.save()
-
-    return response
-
-# Running the audio file through the model
+# Model Views
 class InstrumentDetectionView(APIView):
 
     def dispatch(self, request, *args, **kwargs):
-        user_token_count = UserTokenCount.objects.get(user=request.user)
         if request.user.is_anonymous:
             messages.info(request, 'Must be logged in as a user to access this page.')
             return redirect('login')
-        elif user_token_count.token_count < 1:
+        else:
+            user_token_count = UserTokenCount.objects.get(user=request.user)
+        if user_token_count.token_count < 1:
             messages.info(request, 'You do not have enough tokens to make a prediction.')
             return redirect('pricing')
+        # Add a check for the existence of files in the request.FILES dictionary
+        elif 'audio_file' not in request.FILES:
+            messages.info(request, 'No audio file was uploaded.')
+            return redirect('index')
         else: return super().dispatch(request, *args, **kwargs)
     
     def post(self, request):
@@ -535,18 +360,9 @@ class ModelSelectionView(UserPassesTestMixin, View):
         model_config = ModelConfig.load()
         model_config.selected_model_version = selected_model_version
         model_config.save()
-        return redirect('model_selection')
+        messages.success(request, f'Selected model version: {selected_model_version}')
+        return redirect('users')
     
 
 
-def change_user_type(request, user_id):
-    if request.method == 'POST':
-        user_type = request.POST.get('user_type')
-        user_profile = get_object_or_404(Profile, user__id=user_id)  # Get the user profile
-        user_profile.user_type = user_type
-        user_profile.save()
-        return redirect('users')  # Redirect to the users page
 
-def user_has_credits():
-    has_credits = False
-    return has_credits

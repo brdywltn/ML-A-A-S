@@ -43,59 +43,26 @@
     </div>
     {% endif %}
 
-    {% if user_profile.user_type == 3 or user.is_superuser or user_profile.user_type == 1%}
-    <div
-      class="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800"
-    >
-
-      <h3 class="mb-4 text-xl font-semibold dark:text-white">
-        Generate Financial Statement
-      </h3>
-      <form
-        action="/generate-statement"
-        method="post"
-        class="flex flex-col space-y-4"
-      >
-        <div class="flex flex-col">
-          <label
-            for="startDate"
-            class="text-sm font-medium text-gray-600 dark:text-gray-300"
-            >From Date</label
-          >
-          <input
-            type="date"
-            id="startDate"
-            name="startDate"
-            class="p-2 border rounded-md"
-            required
-          />
-        </div>
-        <div class="flex flex-col">
-          <label
-            for="endDate"
-            class="text-sm font-medium text-gray-600 dark:text-gray-300"
-            >To Date</label
-          >
-          <input
-            type="date"
-            id="endDate"
-            name="endDate"
-            class="p-2 border rounded-md"
-            required
-          />
-        </div>
-        <a href="{% url 'generate_pdf' %}"
-        <button
-          type="submit"
-          class="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-        >
-          Download Financial Statement
-        </button>
-        </a>
-      </form>
-      {% comment %} REPLACE WITH LOGIC TO CHECK PROPER USER {% endcomment %}
+    {% if user_profile.user_type == 3 or user.is_superuser or user_profile.user_type == 1 %}
+    <div class="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
+        <h3 class="mb-4 text-xl font-semibold dark:text-white">Generate Financial Statement</h3>
+        <form action="{% url 'generate_financial_statement' %}" method="post" class="flex flex-col space-y-4">
+            {% csrf_token %}
+            <div class="flex flex-col">
+                <label for="startDate" class="text-sm font-medium text-gray-600 dark:text-gray-300">From Date</label>
+                <input type="date" id="startDate" name="startDate" class="p-2 border rounded-md" required />
+            </div>
+            <div class="flex flex-col">
+                <label for="endDate" class="text-sm font-medium text-gray-600 dark:text-gray-300">To Date</label>
+                <input type="date" id="endDate" name="endDate" class="p-2 border rounded-md" required />
+            </div>
+            <button type="submit" class="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+                Download Financial Statement
+            </button>
+        </form>
     </div>
     {% endif %}
+
     {% if user_profile.user_type == 2 or user.is_superuser  or user_profile.user_type == 1%}
 
     <div
@@ -139,7 +106,7 @@
     {% if user_profile.user_type == 2 or user.is_superuser %}
   <div class="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
     <h3 class="mb-4 text-xl font-semibold dark:text-white">Model Performance</h3>
-    <a href="{% url 'model_performance' %}" class="text-blue-500 hover:underline">View Model Performance</a>
+    <button class="p-2 bg-green-500 text-white rounded-md hover:bg-green-600"><a href="{% url 'model_performance' %}" class="hover:underline">View Model Performance</a></button>
   </div>
   {% endif %}
     <div
