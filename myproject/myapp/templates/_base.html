@@ -9,6 +9,13 @@
     {% compress css %}
     <link rel="stylesheet" href="{% static 'src/output.css' %}" />
     {% endcompress %}
+    <style>
+      /* Ensure the modal body takes up all available space minus a margin, allowing for scrolling */
+      .modal-body {
+        max-height: calc(100vh - 4rem); /* Adjust the 4rem to increase/decrease the top and bottom margin */
+        overflow-y: auto; /* Enable vertical scrolling */
+      }
+    </style>
   </head>
 
   <body>
@@ -86,7 +93,15 @@
     </nav>
     {% endblock navbar %}
     <div class="container mx-auto mt-6">
+      {% if messages %}
+      <div class="space-y-4">
+          {% for message in messages %}
+          <div class="{% if message.tags %}alert-{{ message.tags }}{% endif %}">{{ message }}</div>
+          {% endfor %}
+      </div>
+      {% endif %}
       {% block content %} {% endblock content %}
+      {% block scripts %} {% endblock scripts %}
       
     </div>
     <!-- <footer class="bg-white dark:bg-gray-900 fixed bottom-0 w-full"> -->

@@ -8,3 +8,6 @@ myproject/myproject/__pycache__/settings.cpython-312.pyc
 myproject/myproject/__pycache__/urls.cpython-312.pyc
 .venv/
 myproject/debug.log
+./myproject/debug.log
+debug.log
+desd.code-workspace

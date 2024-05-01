@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-t%k1f1!c4_9f#x@r_z_k69oz21@0eadh2qb_k3pm3=gknej9f@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS =  ['*']
 
 
 # Application definition
@@ -173,10 +173,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 IMAGE_URL = 'static/src/images/'
 
 LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
 
 
 #PayPal API settings
 PAYPAL_MODE = 'sandbox'
 PAYPAL_CLIENT_ID = 'AYpHxonrFMrgnqmjii46SeNsQidn2PjJtEoIgVK0Nrda1iQFUbX28zyuMvUiJk67o_cHII3c8vCMWY-y'
 PAYPAL_CLIENT_SECRET = 'EPXXK3Z7xDr4Gy_kt4OkPLbJRXd9tP62q1Dpbmj5QiwaFh7twcSUalHDRBbFRwxdX_rmHk_F6YStXa95'
-

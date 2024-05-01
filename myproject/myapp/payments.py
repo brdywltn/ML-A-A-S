@@ -16,7 +16,7 @@ def create_payment(request, purchase_type):
     paypalrestsdk.configure({
         "mode": settings.PAYPAL_MODE,
         "client_id": settings.PAYPAL_CLIENT_ID,
-        "client_secret": settings.PAYPAL_CLIENT_SECRET  
+        "client_secret": settings.PAYPAL_CLIENT_SECRET
     })
 
     # We need to check what kind of payment it is first, how many tokens are being bought?
@@ -67,7 +67,7 @@ def create_payment(request, purchase_type):
         }]
     })
 
-    # Successfully communicated with API 
+    # Successfully communicated with API
     if payment.create():
         print("Payment created successfully!")
         # get url for payment approval
@@ -134,4 +134,6 @@ def payment_cancelled(request):
     return render(request, 'payment_cancelled.html')
 
 def payment_success(request):
+    log_data = get_log_data(request.user, Action.PAYMENT_SUCCESSFUL, 'success')
+    create_log(request.user, log_data)
     return render(request,'payment_success.html')
