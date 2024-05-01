@@ -7,9 +7,12 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from .models import Action, UserTokenCount, Payment
 from .views import get_log_data, create_log
+from .models import UserTokenCount, Action
+from rest_framework.response import Response
+from rest_framework import status
+
 # Create a payment that can be made via the PayPal API
-# Create a payment that can be made via the PayPal API
-def create_payment(request):
+def create_payment(request, purchase_type):
     # Configure PayPal SDK
     paypalrestsdk.configure({
         "mode": settings.PAYPAL_MODE,
@@ -17,6 +20,26 @@ def create_payment(request):
         "client_secret": settings.PAYPAL_CLIENT_SECRET
     })
 
+    # We need to check what kind of payment it is first, how many tokens are being bought?
+    if purchase_type == "single":
+        name = "Single purchase"
+        sku = "sku01"
+        quantity = 1
+        price = "9.99"
+        description = "Single purchase of 1 token"
+
+    elif purchase_type == "bulk":
+        name = "Bulk purchase"
+        sku = "sku02"
+        quantity = 10
+        price = "44.99"
+        description = "Bulk purchase of 10 tokens"
+    else:
+        return JsonResponse({"error": "Invalid purchase type"})
+
+    # Pass the quantity to the session to later change the payment execution type
+    request.session['purchase_quantity'] = quantity 
+    
     # Create payment object
     payment = paypalrestsdk.Payment({
         "intent": "sale",
@@ -30,18 +53,18 @@ def create_payment(request):
         "transactions" : [{
             "item_list" : {
                 "items" : [{
-                    "name": "Test item",
-                    "sku": "test item",
-                    "price": "9.99",
+                    "name": name,
+                    "sku": sku,
+                    "price": price,
                     "currency": "GBP",
                     "quantity": 1,
                 }]
             },
             "amount" : {
-                "total": "9.99",
+                "total": price,
                 "currency": "GBP"
             },
-            "description": "Test payment description"
+            "description": description
         }]
     })
 
@@ -111,10 +134,10 @@ def execute_payment(request):
 
     # If neither ID, error, restart
     if not payment_id or not payer_id:
-        print("No payment")
-        return redirect('handler404')
-
-    # Configure API
+        print("no payment id or payer_id")
+        return Response({"error": "Error: No payment id or payer id was found."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    # configure API
     paypalrestsdk.configure({
         "mode": settings.PAYPAL_MODE,
         "client_id": settings.PAYPAL_CLIENT_ID,
@@ -127,34 +150,30 @@ def execute_payment(request):
     # If it we do and the payer IDs match
     if payment.execute({"payer_id": payer_id}):
         print("Payment executed successfully!")
+        print(f"Payment: {payment}")
 
         # Allocate some tokens
-        user = request.user
-        tokens_purchased = 1
+        tokens_purchased = request.session.get("purchase_quantity")
 
-        if request.user.is_authenticated:
-            add_tokens(user, tokens_purchased)
+        add_tokens(request.user, tokens_purchased)
+        # log_data = {
+        #     'action': 'Tokens purchased',
 
-            # Save payment details to the database
-            Payment.objects.create(
-                user=user,
-                amount=payment.transactions[0].amount.total,
-                payment_id=payment_id,
-                payer_id=payer_id
-            )
+        # }
+        log_data = get_log_data(request.user, Action.PAYMENT_SUCCESSFUL, 'success', description=f"Purchased {tokens_purchased} tokens")
+        create_log(request.user if request.user.is_authenticated else None, log_data)
 
-            return redirect('success')
-        else:
-            return redirect('handler404')
+
+        return redirect('success')
     else:
-        print("Payment execution failed")
-        return redirect('handler404')
+        print("exiting at the end of execute_payment(), incorrect payer id")
+        return Response({"error": "Error: Payment failed to execute, incorrect payer id"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 def add_tokens(user, tokens):
     token_count_instance, created = UserTokenCount.objects.get_or_create(user=user)
-    token_count_instance.token_count += tokens
+    token_count_instance.token_count += int(tokens)
     token_count_instance.save()
-
+    
 def payment_cancelled(request):
     return render(request, 'payment_cancelled.html')
 

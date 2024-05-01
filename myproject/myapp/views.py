@@ -92,6 +92,44 @@ def submit_feedback(request):
     
     return redirect('index')
 
+@csrf_exempt
+def log_fileupload(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        status = data.get('status')
+        file = data.get('file')
+
+        if request.user.is_authenticated:
+            log_data = get_log_data(request.user, Action.UPLOAD_FILE, status, file)
+            create_log(request.user, log_data)
+
+        return JsonResponse({'message': 'Log created successfully'}, status=201)
+
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+def submit_feedback(request):
+    if request.method == 'POST' and request.user.is_authenticated:
+        prediction = request.POST.get('prediction')
+        liked = request.POST.get('feedback') == 'true'
+        file_name = request.POST.get('file_name')  # Get the filename from the form data
+        
+        # Create log data using the get_log_data function
+        log_data = get_log_data(
+            user=request.user,
+            action=Action.FEEDBACK_SUBMITTED,
+            status='success',
+            file=file_name,  # Use the filename obtained from the form
+            description=prediction,
+            feedback=liked
+        )
+        
+        # Create the Log entry using the create_log function
+        create_log(request.user, log_data)
+        
+        return redirect('index')
+    
+    return redirect('index')
+
 def admin_table(request):
     if request.user.is_authenticated:
         if request.user.profile.user_type != 0 or request.user.is_superuser:
