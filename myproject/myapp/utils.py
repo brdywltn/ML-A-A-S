@@ -5,10 +5,10 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import Action
 import json
 
-def get_log_data(user, action, status='success', file=None, description=None, feedback=None):
+def get_log_data(user, action, status='success', file=None, description=None, feedback=None, user_type=None):
     log_data = {
         'username': user.username,
-        'action': action.value.format(username=user.username),
+        'action': action.value.format(username=user.username, user=user.username, user_type=user_type),
         'status': status,
         'file': file,
         'description': description,

@@ -34,6 +34,7 @@ class UserTokenCount(models.Model):
 
 
 class Action(Enum):
+    CHANGE_USER_TYPE = "{username} changed {user}'s user type to {user_type}"
     UPLOAD_FILE = "{username} has successfully uploaded a file."
     LOGIN = "{username} has logged in to their account."
     REGISTER = "{username} has registered for a new account."
