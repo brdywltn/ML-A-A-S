@@ -8,11 +8,10 @@ from reportlab.platypus import Table, TableStyle
 from django.shortcuts import redirect
 from django.http import HttpResponse
 from django.contrib import messages
-from django.contrib.auth.decorators import user_passes_test
 from .models import Payment
-from .decorators import admin_accountant_required, login_required, ml_engineer_required, admin_required, accountant_required
+from .decorators import admin_accountant_required, login_required
 from reportlab.lib.units import inch
-
+from django.utils import timezone
 
 @login_required
 @admin_accountant_required
@@ -22,8 +21,8 @@ def generate_financial_statement(request):
         end_date = request.POST.get('endDate')
 
         if start_date and end_date:
-            start_date = datetime.strptime(start_date, '%Y-%m-%d')
-            end_date = datetime.strptime(end_date, '%Y-%m-%d')
+            start_date = timezone.make_aware(datetime.strptime(start_date, '%Y-%m-%d'))  
+            end_date = timezone.make_aware(datetime.strptime(end_date, '%Y-%m-%d'))  
 
             payments = Payment.objects.filter(date__range=[start_date, end_date])
 
@@ -39,7 +38,7 @@ def generate_financial_statement(request):
             data = [['User', 'Amount', 'Date']]
             total_amount = 0
             for payment in payments:
-                data.append([payment.user.username, f"£{payment.amount}", payment.date.strftime('%Y-%m-%d')])
+                data.append([payment.user.username, f"£{payment.amount}", payment.date.astimezone(timezone.get_current_timezone()).strftime('%Y-%m-%d')])
                 total_amount += payment.amount
 
             table = Table(data)
@@ -65,7 +64,7 @@ def generate_financial_statement(request):
 
             # Add total amount
             p.setFont("Helvetica-Bold", 14)
-            p.drawString(inch, 8 * inch, f"Total Amount: ${total_amount}")
+            p.drawString(inch, 8 * inch, f"Total Amount: £{total_amount}")
 
             p.showPage()
             p.save()

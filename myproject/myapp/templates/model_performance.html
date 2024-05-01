@@ -22,5 +22,13 @@
             Reset Metrics
         </button>
     </form>
+
+    <div class="mt-8">
+        <h2 class="text-xl font-bold mb-2">User Satisfaction</h2>
+        <div class="bg-white shadow-md rounded p-6">
+            <p><strong>Percentage of Likes:</strong> {{ satisfaction_percentage }}%</p>
+            <p><strong>Total Ratings:</strong> {{ total_ratings }}</p>
+        </div>
+    </div>
 </div>
 {% endblock content %}

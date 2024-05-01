@@ -75,6 +75,15 @@
                 >Dashboard</a
               >
             </li>
+            {% if user.is_superuser or user.profile.user_type == 1 %}
+            <li>
+              <a
+                href="{% url 'admin:index' %}"
+                class="block py-2 px-3 {% if request.path == '/admin/' %}text-blue-700{% else %}text-gray-900 dark:text-white{% endif %} rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:p-0 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
+                >Admin</a
+              >
+            </li>
+            {% endif %}
             <form action="{% url 'logout' %}" method="post">
               {% csrf_token %}
               <button type="submit">Logout</button>
@@ -92,6 +101,7 @@
       </div>
     </nav>
     {% endblock navbar %}
+
     <div class="container mx-auto mt-6">
       {% if messages %}
       <div class="space-y-4">
@@ -100,6 +110,7 @@
           {% endfor %}
       </div>
       {% endif %}
+
       {% block content %} {% endblock content %}
       {% block scripts %} {% endblock scripts %}
       
