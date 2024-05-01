@@ -136,7 +136,7 @@ def execute_payment(request):
     if not payment_id or not payer_id:
         print("no payment id or payer_id")
         return Response({"error": "Error: No payment id or payer id was found."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
+
     # configure API
     paypalrestsdk.configure({
         "mode": settings.PAYPAL_MODE,
@@ -154,15 +154,18 @@ def execute_payment(request):
 
         # Allocate some tokens
         tokens_purchased = request.session.get("purchase_quantity")
-
         add_tokens(request.user, tokens_purchased)
-        # log_data = {
-        #     'action': 'Tokens purchased',
 
-        # }
+        # Save payment details to the database
+        Payment.objects.create(
+            user=request.user,
+            amount=payment.transactions[0].amount.total,
+            payment_id=payment_id,
+            payer_id=payer_id
+        )
+
         log_data = get_log_data(request.user, Action.PAYMENT_SUCCESSFUL, 'success', description=f"Purchased {tokens_purchased} tokens")
         create_log(request.user if request.user.is_authenticated else None, log_data)
-
 
         return redirect('success')
     else:

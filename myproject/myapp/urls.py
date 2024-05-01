@@ -1,13 +1,20 @@
 from django.urls import path
-from .views import InstrumentDetectionView, ModelPerformanceView, ModelSelectionView, index, log_fileupload, users, maintenance, \
-handler404, handler500, terms_conditions, privacy_policy, pricing, generate_pdf, admin_table,\
-      change_user_type, submit_feedback
+
+from .views import InstrumentDetectionView, ModelPerformanceView, ModelSelectionView, index, maintenance, handler404, handler500, \
+    terms_conditions, privacy_policy, pricing, submit_feedback
+
+from .pdf_generation import generate_financial_statement
+
+from .user_views import admin_table, change_user_type, users
+
+from .utils import log_fileupload
+
 from .payments import create_payment, execute_payment, payment_cancelled, payment_success
 from django.contrib.auth import views as auth_views
 
 # Authentication
 from .views import RegisterView, CustomLoginView
-from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.views import LogoutView
 
 urlpatterns = [
     path('', index, name='index'),
@@ -21,9 +28,7 @@ urlpatterns = [
     path('pricay_policy/', privacy_policy, name='privacy_policy'),
     path('pricing/', pricing, name='pricing'),
     path('submit_feedback/', submit_feedback, name='submit_feedback'),
-    path('generate_pdf/', generate_pdf, name='generate_pdf'),
     path('pricing/', pricing, name='pricing'),
-    path('generate_pdf/', generate_pdf, name='generate_pdf'),
     path('instrument_detection/', InstrumentDetectionView.as_view(), name='instrument_detection'),
     path('model_performance/', ModelPerformanceView.as_view(), name='model_performance'),
     path('model_selection/', ModelSelectionView.as_view(), name='model_selection'),
@@ -46,6 +51,8 @@ urlpatterns = [
     path('payment/create/<str:purchase_type>', create_payment, name='create_payment'),
     path('payment/execute/', execute_payment, name='execute_payment'),
     path('payment/cancel/', payment_cancelled, name='payment_cancelled'),
-    path('payment_success/', payment_success, name='success')
+    path('payment_success/', payment_success, name='success'),
+    path('generate_statement/', generate_financial_statement, name='generate_financial_statement')
+
 
 ]
