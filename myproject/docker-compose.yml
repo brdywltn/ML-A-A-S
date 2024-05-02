@@ -45,6 +45,7 @@ services:
     volumes:
       - ./models:/models
       - ./monitoring_config.txt:/etc/tensorflow_serving/monitoring_config.txt
+      - ./model_config.cfg:/models/model_config.cfg
     environment:
       - MODEL_NAME=instrument_model
       - MODEL_BASE_PATH=/models/instrument_model
@@ -53,6 +54,7 @@ services:
       - --rest_api_port=8501
       - --model_name=instrument_model
       - --monitoring_config_file=/etc/tensorflow_serving/monitoring_config.txt
+      - --model_config_file=/models/model_config.cfg
 
   prometheus:
     image: prom/prometheus
